@@ -36,15 +36,20 @@ const testimonials = [
   },
 ]
 
-export default function Testimonials() {
+type TestimonialsProps = {
+  variant?: 'default' | 'compact'
+}
+
+export default function Testimonials({ variant = 'default' }: TestimonialsProps) {
   const [current, setCurrent] = useState(0)
   const { ref, inView } = useInView(0.1)
+  const isCompact = variant === 'compact'
 
   const prev = () => setCurrent((c) => (c === 0 ? testimonials.length - 1 : c - 1))
   const next = () => setCurrent((c) => (c === testimonials.length - 1 ? 0 : c + 1))
 
   return (
-    <section id="testimoni" className="py-20 sm:py-28 bg-forest-800 relative overflow-hidden" ref={ref}>
+    <section id="testimoni" className={`${isCompact ? 'py-16 sm:py-20' : 'py-20 sm:py-28'} bg-forest-800 relative overflow-hidden`} ref={ref}>
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
@@ -59,17 +64,27 @@ export default function Testimonials() {
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="text-center max-w-2xl mx-auto mb-12 sm:mb-16"
+          className={`text-center max-w-2xl mx-auto ${isCompact ? 'mb-10 sm:mb-12' : 'mb-12 sm:mb-16'}`}
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 mb-5">
             <div className="w-1.5 h-1.5 rounded-full bg-terracotta-400" />
             <span className="text-cream-200 text-xs font-semibold uppercase tracking-wider">Testimoni</span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white mb-4 leading-tight">
-            Apa Kata <span className="text-terracotta-400">Pelanggan</span> Kami
+            {isCompact ? (
+              <>
+                Kepercayaan <span className="text-terracotta-400">Pelanggan</span> Kami
+              </>
+            ) : (
+              <>
+                Apa Kata <span className="text-terracotta-400">Pelanggan</span> Kami
+              </>
+            )}
           </h2>
           <p className="text-forest-200/80 text-base sm:text-lg">
-            Kepuasan pelanggan adalah kebanggaan terbesar kami
+            {isCompact
+              ? 'Sedikit bukti sosial untuk membantu calon customer lebih yakin sebelum konfirmasi batch.'
+              : 'Kepuasan pelanggan adalah kebanggaan terbesar kami'}
           </p>
         </motion.div>
 
@@ -77,9 +92,9 @@ export default function Testimonials() {
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="max-w-3xl mx-auto"
+          className={`${isCompact ? 'max-w-2xl' : 'max-w-3xl'} mx-auto`}
         >
-          <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl p-8 sm:p-12 border border-white/15">
+          <div className={`relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/15 ${isCompact ? 'p-7 sm:p-8' : 'p-8 sm:p-12'}`}>
             <Quote size={48} className="absolute top-6 right-8 text-terracotta-400/20" />
 
             <motion.div
@@ -94,7 +109,7 @@ export default function Testimonials() {
                 ))}
               </div>
 
-              <p className="text-white/90 text-base sm:text-lg leading-relaxed mb-8 italic">
+              <p className={`text-white/90 leading-relaxed mb-8 italic ${isCompact ? 'text-[15px] sm:text-base' : 'text-base sm:text-lg'}`}>
                 "{testimonials[current].text}"
               </p>
 

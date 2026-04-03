@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useInView } from '@/hooks/useInView'
 import { MessageCircle, ClipboardList, CreditCard, Truck } from 'lucide-react'
 
-const steps = [
+const defaultSteps = [
   {
     icon: MessageCircle,
     step: '01',
@@ -35,8 +35,45 @@ const steps = [
   },
 ]
 
-export default function HowToOrder() {
+const batchSteps = [
+  {
+    icon: MessageCircle,
+    step: '01',
+    title: 'Cek Status Batch',
+    desc: 'Lihat apakah batch sedang dibuka, berjalan, atau sudah ditutup sebelum menghubungi admin.',
+    color: 'from-terracotta-400 to-terracotta-600',
+  },
+  {
+    icon: ClipboardList,
+    step: '02',
+    title: 'Pilih Referensi Menu',
+    desc: 'Gunakan timeline 4 minggu untuk memilih slot dan menu yang paling sesuai sebagai referensi batch.',
+    color: 'from-forest-400 to-forest-600',
+  },
+  {
+    icon: CreditCard,
+    step: '03',
+    title: 'Konfirmasi ke Admin',
+    desc: 'Admin akan memastikan batch masih dibuka, mengecek kuota, lalu mengarahkan Anda ke proses konfirmasi.',
+    color: 'from-blue-400 to-blue-600',
+  },
+  {
+    icon: Truck,
+    step: '04',
+    title: 'Masuk Batch / Waiting List',
+    desc: 'Jika batch masih dibuka Anda akan diproses ke batch aktif, jika tidak Anda akan diarahkan ke waiting list batch berikutnya.',
+    color: 'from-amber-400 to-amber-600',
+  },
+]
+
+type HowToOrderProps = {
+  variant?: 'default' | 'batch'
+}
+
+export default function HowToOrder({ variant = 'default' }: HowToOrderProps) {
   const { ref, inView } = useInView(0.1)
+  const isBatch = variant === 'batch'
+  const steps = isBatch ? batchSteps : defaultSteps
 
   return (
     <section className="py-20 sm:py-28 bg-cream-50" ref={ref}>
@@ -49,13 +86,23 @@ export default function HowToOrder() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-terracotta-50 border border-terracotta-200 mb-5">
             <div className="w-1.5 h-1.5 rounded-full bg-terracotta-500" />
-            <span className="text-terracotta-700 text-xs font-semibold uppercase tracking-wider">Cara Pesan</span>
+            <span className="text-terracotta-700 text-xs font-semibold uppercase tracking-wider">{isBatch ? 'Cara Join Batch' : 'Cara Pesan'}</span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-charcoal-900 mb-4 leading-tight">
-            Pesan dalam <span className="text-terracotta-500">4 Langkah</span> Mudah
+            {isBatch ? (
+              <>
+                Join Batch dalam <span className="text-terracotta-500">4 Langkah</span> Jelas
+              </>
+            ) : (
+              <>
+                Pesan dalam <span className="text-terracotta-500">4 Langkah</span> Mudah
+              </>
+            )}
           </h2>
           <p className="text-charcoal-500 text-base sm:text-lg">
-            Proses pemesanan yang simpel dan cepat, tanpa ribet
+            {isBatch
+              ? 'Alur join batch yang lebih terstruktur, mulai dari cek status hingga konfirmasi ke admin.'
+              : 'Proses pemesanan yang simpel dan cepat, tanpa ribet'}
           </p>
         </motion.div>
 

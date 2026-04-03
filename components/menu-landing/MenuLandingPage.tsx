@@ -58,6 +58,11 @@ export default function MenuLandingPage() {
                   Cara Join Batch
                 </a>
               </div>
+              <div className="mt-8 flex flex-wrap gap-3 text-sm text-white/75">
+                <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2">Konfirmasi via WhatsApp</span>
+                <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2">Batch dibuka berkala</span>
+                <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2">Waiting list jika batch berjalan</span>
+              </div>
             </div>
 
             <div className="rounded-[18px] border border-white/10 bg-white/10 p-6 backdrop-blur-md">
@@ -83,12 +88,28 @@ export default function MenuLandingPage() {
         </div>
       </section>
 
+      <section className="relative z-10 -mt-10 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-3">
+          {[
+            ['Sebelum Konfirmasi', 'Pastikan status batch masih dibuka agar admin bisa memasukkan Anda ke batch aktif.'],
+            ['Saat Batch Berjalan', 'Jika batch sudah berjalan, admin akan mengarahkan Anda ke waiting list batch berikutnya.'],
+            ['Yang Dilihat di Halaman Ini', 'Timeline menu adalah referensi 4 minggu kerja untuk membantu Anda memilih batch yang paling relevan.'],
+          ].map(([title, desc]) => (
+            <div key={title} className="rounded-[16px] border border-[#ece7de] bg-white p-5 shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">Panduan Singkat</p>
+              <h2 className="mt-3 text-lg font-semibold text-[#2C3E50]">{title}</h2>
+              <p className="mt-3 text-[15px] leading-7 text-charcoal-600">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div id="batch-aktif">
         <MenuShowcase />
       </div>
 
       <div id="cara-join">
-        <HowToOrder />
+        <HowToOrder variant="batch" />
       </div>
 
       <section className="bg-white py-20 sm:py-24">
@@ -119,7 +140,7 @@ export default function MenuLandingPage() {
         </div>
       </section>
 
-      <Testimonials />
+      <Testimonials variant="compact" />
 
       <section className="bg-[#2C3E50] py-20 text-white sm:py-24">
         <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
