@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { requireAdminSession } from '@/lib/auth/admin-session'
+import JoinRequestStatusForm from '@/components/admin/JoinRequestStatusForm'
 import { getJoinRequests } from '@/lib/data/join-requests'
 
 export default async function AdminJoinRequestsPage() {
@@ -60,26 +61,7 @@ export default async function AdminJoinRequestsPage() {
                     >
                       Lihat Bukti Pembayaran
                     </a>
-
-                    <form action={async (formData) => {
-                      'use server'
-                      const { updateJoinRequestStatusAction } = await import('./actions')
-                      await updateJoinRequestStatusAction(request.id, undefined, formData)
-                    }} className="space-y-3">
-                      <select
-                        name="status"
-                        defaultValue={request.status}
-                        className="w-full rounded-[12px] border border-[#ddd4c7] px-4 py-3 text-sm outline-none transition focus:border-[#D35400]"
-                      >
-                        <option value="new">new</option>
-                        <option value="verified">verified</option>
-                        <option value="rejected">rejected</option>
-                        <option value="waitlisted">waitlisted</option>
-                      </select>
-                      <button type="submit" className="w-full rounded-[12px] bg-[#D35400] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#B94600]">
-                        Simpan Status Request
-                      </button>
-                    </form>
+                    <JoinRequestStatusForm requestId={request.id} currentStatus={request.status} />
                   </div>
                 </div>
               ))

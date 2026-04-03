@@ -4,8 +4,9 @@ import { revalidatePath } from 'next/cache'
 import { requireAdminSession } from '@/lib/auth/admin-session'
 import { setActiveBatch, updateBatch } from '@/lib/data/batches'
 import { deleteBatchSlot, upsertBatchSlot } from '@/lib/data/batch-slots'
+import type { AdminFormState } from '@/lib/forms/admin-form-state'
 
-export async function updateBatchAction(batchId: string, _prevState: { error?: string; success?: string } | undefined, formData: FormData) {
+export async function updateBatchAction(batchId: string, _prevState: AdminFormState, formData: FormData): Promise<AdminFormState> {
   await requireAdminSession()
 
   const name = String(formData.get('name') || '').trim()
@@ -18,7 +19,7 @@ export async function updateBatchAction(batchId: string, _prevState: { error?: s
   const setActive = formData.get('isActive') === 'on'
 
   if (!name) {
-    return { error: 'Nama batch wajib diisi.' }
+    return { error: 'Nama batch wajib diisi.', success: '' }
   }
 
   try {
@@ -40,17 +41,17 @@ export async function updateBatchAction(batchId: string, _prevState: { error?: s
     revalidatePath(`/admin/batches/${batchId}`)
     revalidatePath('/api/public-menu')
 
-    return { success: 'Batch berhasil diperbarui.' }
+    return { error: '', success: 'Batch berhasil diperbarui.' }
   } catch (error) {
-    return { error: error instanceof Error ? error.message : 'Gagal memperbarui batch.' }
+    return { error: error instanceof Error ? error.message : 'Gagal memperbarui batch.', success: '' }
   }
 }
 
 export async function upsertBatchSlotAction(
   batchId: string,
-  _prevState: { error?: string; success?: string } | undefined,
+  _prevState: AdminFormState,
   formData: FormData
-) {
+): Promise<AdminFormState> {
   await requireAdminSession()
 
   const slotId = String(formData.get('slotId') || '').trim()
@@ -59,7 +60,7 @@ export async function upsertBatchSlotAction(
   const sortOrderRaw = String(formData.get('sortOrder') || '0').trim()
 
   if (!date || !dayName) {
-    return { error: 'Tanggal dan nama hari wajib diisi.' }
+    return { error: 'Tanggal dan nama hari wajib diisi.', success: '' }
   }
 
   try {
@@ -79,15 +80,22 @@ export async function upsertBatchSlotAction(
 
     revalidatePath(`/admin/batches/${batchId}`)
     revalidatePath('/api/public-menu')
-    return { success: 'Slot batch berhasil disimpan.' }
+    return { error: '', success: 'Slot batch berhasil disimpan.' }
   } catch (error) {
-    return { error: error instanceof Error ? error.message : 'Gagal menyimpan slot batch.' }
+    return { error: error instanceof Error ? error.message : 'Gagal menyimpan slot batch.', success: '' }
   }
 }
 
-export async function deleteBatchSlotAction(batchId: string, slotId: string) {
+export async function deleteBatchSlotAction(batchId: string, _prevState: AdminFormState, formData: FormData): Promise<AdminFormState> {
   await requireAdminSession()
-  await deleteBatchSlot(slotId)
-  revalidatePath(`/admin/batches/${batchId}`)
-  revalidatePath('/api/public-menu')
+  const slotId = String(formData.get('slotId') || '').trim()
+
+  try {
+    await deleteBatchSlot(slotId)
+    revalidatePath(`/admin/batches/${batchId}`)
+    revalidatePath('/api/public-menu')
+    return { error: '', success: 'Slot batch berhasil dihapus.' }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Gagal menghapus slot batch.', success: '' }
+  }
 }

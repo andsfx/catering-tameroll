@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import AdminLoginForm from '@/components/admin/AdminLoginForm'
 
 export const metadata: Metadata = {
   title: 'Admin Login - Tameroll',
@@ -20,42 +21,7 @@ export default function AdminLoginPage() {
           </p>
         </div>
 
-        <form action={async (formData) => {
-          'use server'
-          const { loginAdmin } = await import('./actions')
-          await loginAdmin(undefined, formData)
-        }} className="space-y-5">
-          <div>
-            <label htmlFor="username" className="mb-2 block text-sm font-semibold text-[#2C3E50]">
-              Username
-            </label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              className="w-full rounded-[12px] border border-[#ddd4c7] px-4 py-3 text-sm outline-none transition focus:border-[#D35400]"
-              placeholder="admin"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-semibold text-[#2C3E50]">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              className="w-full rounded-[12px] border border-[#ddd4c7] px-4 py-3 text-sm outline-none transition focus:border-[#D35400]"
-              placeholder="Masukkan password admin"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full rounded-[12px] bg-[#D35400] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#B94600]"
-          >
-            Login
-          </button>
-        </form>
+        <AdminLoginForm />
       </div>
     </main>
   )
