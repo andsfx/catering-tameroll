@@ -10,12 +10,16 @@ import MenuErrorState from '@/components/menu/MenuErrorState'
 import MenuSkeleton from '@/components/menu/MenuSkeleton'
 import WeeklyMenuList from '@/components/menu/WeeklyMenuList'
 import {
+  buildBatchActionWhatsAppUrl,
   buildWhatsAppFallbackUrl,
   formatOptionalLongDate,
   type BatchMeta,
   formatBatchRange,
+  getBatchStatusCopy,
+  getBatchStatusLabel,
   getBatchSummary,
   hasMenuDetails,
+  isBatchJoinOpen,
   normalizeMenuResponse,
   type MenuItem,
 } from '@/lib/menu'
@@ -28,6 +32,8 @@ export default function MenuSection() {
   const { ref, inView } = useInView(0.1)
   const [items, setItems] = useState<MenuItem[]>([])
   const [batchMeta, setBatchMeta] = useState<BatchMeta>({
+    batchStatus: 'open',
+    currentBatchLabel: 'Batch Aktif',
     deadlineJoin: null,
     remainingQuota: null,
     nextBatchOpen: null,
@@ -56,6 +62,8 @@ export default function MenuSection() {
       setError('Gagal memuat menu terbaru. Silakan hubungi admin via WhatsApp.')
       setItems([])
       setBatchMeta({
+        batchStatus: 'open',
+        currentBatchLabel: 'Batch Aktif',
         deadlineJoin: null,
         remainingQuota: null,
         nextBatchOpen: null,
@@ -74,11 +82,13 @@ export default function MenuSection() {
   const batchSummary = getBatchSummary(items)
   const deadlineLabel = formatOptionalLongDate(batchMeta.deadlineJoin)
   const nextBatchLabel = formatOptionalLongDate(batchMeta.nextBatchOpen)
-  const batchJoinUrl = buildWhatsAppFallbackUrl(
-    batchSummary
-      ? `Halo Tameroll, saya ingin ikut batch pre-order catering aktif periode ${formatBatchRange(batchSummary)}. Mohon info detail paket, deadline join, kuota tersisa, dan proses pembayarannya.`
-      : undefined
+  const statusLabel = getBatchStatusLabel(batchMeta.batchStatus)
+  const statusCopy = getBatchStatusCopy(batchMeta.batchStatus)
+  const batchJoinUrl = buildBatchActionWhatsAppUrl(batchMeta, batchSummary)
+  const waitingListUrl = buildWhatsAppFallbackUrl(
+    'Halo Tameroll, saya ingin masuk waiting list untuk batch catering berikutnya. Mohon info jadwal pembukaan batch selanjutnya.'
   )
+  const batchOpen = isBatchJoinOpen(batchMeta.batchStatus)
 
   return (
     <section id="menu" className="bg-[#FDFBF7] py-20 sm:py-28" ref={ref}>
@@ -99,7 +109,7 @@ export default function MenuSection() {
             Batch Catering <span className="text-[#D35400]">4 Minggu Kerja</span>
           </h2>
           <p className="mx-auto max-w-3xl text-[15px] leading-8 text-charcoal-600 sm:text-lg">
-            Calon customer bergabung ke batch aktif yang sedang dibuka. Lihat ringkasan 20 slot kerja ke depan untuk memilih batch yang paling cocok.
+            Menu 4 minggu ini adalah referensi slot dalam sistem batch. Calon customer wajib konfirmasi via WhatsApp sebelum bergabung ke batch yang sedang dibuka.
           </p>
         </motion.div>
 
@@ -129,10 +139,13 @@ export default function MenuSection() {
                         Batch Aktif Saat Ini
                       </p>
                       <h3 className="mt-2 font-serif text-[1.9rem] leading-tight tracking-[-0.02em] text-[#2C3E50] sm:text-[2.15rem]">
-                        {formatBatchRange(batchSummary)}
+                        {batchMeta.currentBatchLabel || formatBatchRange(batchSummary)}
                       </h3>
+                      <div className="mt-3 inline-flex rounded-full border border-[#D35400]/15 bg-[#D35400]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#D35400]">
+                        {statusLabel}
+                      </div>
                       <p className="mt-3 max-w-2xl text-[15px] leading-7 text-charcoal-600 sm:text-base">
-                        Customer bergabung ke batch aktif yang sedang dibuka. Pilih slot yang tersedia sebagai referensi menu, lalu lanjutkan konfirmasi melalui WhatsApp.
+                        {statusCopy}
                       </p>
                       <div className="mt-4 grid gap-3 sm:grid-cols-3">
                         <div className="rounded-[12px] border border-[#ece7de] bg-white px-4 py-3 shadow-sm">
@@ -173,14 +186,30 @@ export default function MenuSection() {
                         {batchSummary.activeSlots} slot siap dipilih
                         </span>
                       </div>
-                      <a
-                        href={batchJoinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center rounded-[12px] bg-[#D35400] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#B94600]"
-                      >
-                        Gabung Batch via WhatsApp
-                      </a>
+                      {batchOpen ? (
+                        <a
+                          href={batchJoinUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center rounded-[12px] bg-[#D35400] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#B94600]"
+                        >
+                          Konfirmasi Join Batch
+                        </a>
+                      ) : (
+                        <>
+                          <div className="inline-flex items-center justify-center rounded-[12px] border border-charcoal-200 bg-white px-5 py-3 text-sm font-bold text-charcoal-500">
+                            {statusLabel}
+                          </div>
+                          <a
+                            href={waitingListUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center rounded-[12px] bg-[#2C3E50] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#223240]"
+                          >
+                            Masuk Waiting List Batch Berikutnya
+                          </a>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -200,7 +229,7 @@ export default function MenuSection() {
                       </p>
                     </div>
                     <a
-                      href={buildWhatsAppFallbackUrl('Halo Tameroll, saya ingin masuk waiting list untuk batch catering berikutnya. Mohon info jadwal pembukaan batch selanjutnya.')}
+                      href={waitingListUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"
@@ -231,7 +260,7 @@ export default function MenuSection() {
       </div>
 
       <MenuDetailModal
-        item={selectedItem && selectedItem.isAvailable && hasMenuDetails(selectedItem) ? selectedItem : null}
+        item={selectedItem && hasMenuDetails(selectedItem) ? selectedItem : null}
         batchSummary={batchSummary}
         batchMeta={batchMeta}
         onClose={() => setSelectedItem(null)}

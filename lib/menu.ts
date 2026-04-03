@@ -24,6 +24,8 @@ export type BatchSummary = {
 }
 
 export type BatchMeta = {
+  batchStatus: 'open' | 'running' | 'closed'
+  currentBatchLabel: string | null
   deadlineJoin: string | null
   remainingQuota: number | null
   nextBatchOpen: string | null
@@ -133,6 +135,40 @@ export function buildWhatsAppMenuUrl(item: MenuItem, batch?: BatchSummary | null
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`
 }
 
+export function buildBatchActionWhatsAppUrl(
+  batchMeta: BatchMeta,
+  batchSummary: BatchSummary | null,
+  item?: MenuItem | null
+): string {
+  const period = batchSummary ? formatBatchRange(batchSummary) : 'batch aktif saat ini'
+  const slotReference = item
+    ? `Saya melihat referensi menu di slot ${formatMenuDayAndDate(item.date, item.dayName)}${item.mainCourse ? ` dengan menu ${item.mainCourse}` : ''}.`
+    : ''
+
+  const textByStatus = {
+    open: [
+      'Halo Tameroll, saya ingin konfirmasi join batch catering aktif.',
+      batchMeta.currentBatchLabel ? `Batch: ${batchMeta.currentBatchLabel}.` : `Periode: ${period}.`,
+      slotReference,
+      'Mohon info kuota, deadline join, dan proses pembayarannya.',
+    ],
+    running: [
+      'Halo Tameroll, saya melihat batch catering saat ini sudah berjalan.',
+      batchMeta.currentBatchLabel ? `Batch saat ini: ${batchMeta.currentBatchLabel}.` : `Batch saat ini: ${period}.`,
+      slotReference,
+      'Saya ingin masuk waiting list untuk batch berikutnya. Mohon info jadwal pembukaannya.',
+    ],
+    closed: [
+      'Halo Tameroll, saya melihat batch catering saat ini sudah ditutup.',
+      batchMeta.currentBatchLabel ? `Batch terakhir: ${batchMeta.currentBatchLabel}.` : `Batch terakhir: ${period}.`,
+      slotReference,
+      'Mohon bantu masukkan saya ke waiting list dan infokan pembukaan batch berikutnya.',
+    ],
+  }
+
+  return buildWhatsAppFallbackUrl(textByStatus[batchMeta.batchStatus].filter(Boolean).join('\n'))
+}
+
 export function buildWhatsAppFallbackUrl(message?: string): string {
   const text =
     message ||
@@ -163,6 +199,28 @@ export function formatOptionalLongDate(date: string | null): string | null {
   return formatMenuDateLong(date)
 }
 
+export function getBatchStatusLabel(status: BatchMeta['batchStatus']): string {
+  if (status === 'running') return 'Batch Sedang Berjalan'
+  if (status === 'closed') return 'Batch Ditutup'
+  return 'Batch Dibuka'
+}
+
+export function getBatchStatusCopy(status: BatchMeta['batchStatus']): string {
+  if (status === 'running') {
+    return 'Batch ini sudah berjalan. Pendaftaran baru diarahkan ke batch berikutnya melalui waiting list.'
+  }
+
+  if (status === 'closed') {
+    return 'Batch ini sudah ditutup. Silakan tunggu pembukaan batch berikutnya atau masuk ke waiting list.'
+  }
+
+  return 'Batch aktif masih membuka konfirmasi peserta. Pilih slot referensi menu lalu lanjut konfirmasi melalui WhatsApp.'
+}
+
+export function isBatchJoinOpen(status: BatchMeta['batchStatus']): boolean {
+  return status === 'open'
+}
+
 export function getWorkdayGrid(items: MenuItem[]): MenuItem[][] {
   const rows: MenuItem[][] = []
 
@@ -188,12 +246,16 @@ function asNullableString(value: unknown): string | null {
 }
 
 function normalizeBatchMeta(rawMeta: Record<string, unknown> | undefined, items: MenuItem[]): BatchMeta {
+  const batchStatus = normalizeBatchStatus(rawMeta?.batchStatus)
+  const currentBatchLabel = asNullableString(rawMeta?.currentBatchLabel)
   const deadlineJoin = normalizeDateLike(rawMeta?.deadlineJoin) ?? deriveDeadlineJoin(items)
   const remainingQuota = asNullableNumber(rawMeta?.remainingQuota)
   const nextBatchOpen = normalizeDateLike(rawMeta?.nextBatchOpen) ?? deriveNextBatchOpen(items)
   const nextBatchLabel = asNullableString(rawMeta?.nextBatchLabel)
 
   return {
+    batchStatus,
+    currentBatchLabel,
     deadlineJoin,
     remainingQuota,
     nextBatchOpen,
@@ -203,11 +265,19 @@ function normalizeBatchMeta(rawMeta: Record<string, unknown> | undefined, items:
 
 function emptyBatchMeta(): BatchMeta {
   return {
+    batchStatus: 'open',
+    currentBatchLabel: 'Batch Aktif',
     deadlineJoin: null,
     remainingQuota: null,
     nextBatchOpen: null,
     nextBatchLabel: null,
   }
+}
+
+function normalizeBatchStatus(value: unknown): BatchMeta['batchStatus'] {
+  const status = asString(value).toLowerCase()
+  if (status === 'running' || status === 'closed') return status
+  return 'open'
 }
 
 function normalizeDateLike(value: unknown): string | null {

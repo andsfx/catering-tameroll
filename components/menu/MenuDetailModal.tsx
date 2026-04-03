@@ -3,7 +3,14 @@
 import { useEffect } from 'react'
 import { Check, Flame, X } from 'lucide-react'
 import type { BatchMeta, BatchSummary, MenuItem } from '@/lib/menu'
-import { buildWhatsAppMenuUrl, formatBatchRange, formatMenuDateLong, formatOptionalLongDate } from '@/lib/menu'
+import {
+  buildBatchActionWhatsAppUrl,
+  formatBatchRange,
+  formatMenuDateLong,
+  formatOptionalLongDate,
+  getBatchStatusLabel,
+  isBatchJoinOpen,
+} from '@/lib/menu'
 
 type MenuDetailModalProps = {
   item: MenuItem | null
@@ -44,8 +51,10 @@ export default function MenuDetailModal({ item, batchSummary, batchMeta, onClose
 
   if (!item) return null
 
-  const whatsappUrl = buildWhatsAppMenuUrl(item, batchSummary)
+  const whatsappUrl = buildBatchActionWhatsAppUrl(batchMeta, batchSummary, item)
   const deadlineLabel = formatOptionalLongDate(batchMeta.deadlineJoin)
+  const batchOpen = isBatchJoinOpen(batchMeta.batchStatus)
+  const statusLabel = getBatchStatusLabel(batchMeta.batchStatus)
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6">
@@ -77,10 +86,12 @@ export default function MenuDetailModal({ item, batchSummary, batchMeta, onClose
           {batchSummary ? (
             <div className="mb-4 rounded-[12px] border border-[#D35400]/15 bg-[#fff8f2] p-4">
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">
-                Batch aktif {formatBatchRange(batchSummary)}
+                {statusLabel} {batchMeta.currentBatchLabel || formatBatchRange(batchSummary)}
               </p>
               <p className="mt-2 text-[15px] leading-7 text-charcoal-600">
-                Slot ini termasuk dalam batch pre-order yang sedang dibuka. Konfirmasi akhir tetap mengikuti kuota dan deadline batch aktif.
+                {batchOpen
+                  ? 'Slot ini termasuk dalam batch yang masih dibuka. Konfirmasi akhir tetap mengikuti kuota dan deadline batch aktif.'
+                  : 'Slot ini hanya menjadi referensi menu. Batch aktif tidak menerima peserta baru dan Anda akan diarahkan ke waiting list batch berikutnya.'}
               </p>
               <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
                 <span className="rounded-full bg-white px-3 py-1.5 text-charcoal-600 shadow-sm">
@@ -118,7 +129,7 @@ export default function MenuDetailModal({ item, batchSummary, batchMeta, onClose
 
         <div className="absolute inset-x-0 bottom-0 border-t border-[#ece7de] bg-white/95 p-4 backdrop-blur-sm sm:p-5">
           <p className="mb-3 text-center text-xs font-medium uppercase tracking-[0.18em] text-charcoal-500">
-            Konfirmasi slot melalui admin batch
+            {batchOpen ? 'Konfirmasi slot melalui admin batch' : 'Arahkan ke waiting list batch berikutnya'}
           </p>
           <a
             href={whatsappUrl}
@@ -126,7 +137,7 @@ export default function MenuDetailModal({ item, batchSummary, batchMeta, onClose
             rel="noopener noreferrer"
             className="flex w-full items-center justify-center rounded-[12px] bg-[#D35400] px-5 py-4 text-center text-sm font-bold text-white transition hover:bg-[#B94600] sm:text-base"
           >
-            Gabung Batch Aktif Ini
+            {batchOpen ? 'Konfirmasi Join Batch Ini' : 'Masuk Waiting List Batch Berikutnya'}
           </a>
         </div>
       </div>

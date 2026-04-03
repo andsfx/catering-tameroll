@@ -15,6 +15,8 @@
  *    key | value
  *
  * Suggested BatchConfig rows:
+ * batchStatus | open
+ * currentBatchLabel | Batch April 2026
  * deadlineJoin | 2026-04-05
  * remainingQuota | 12
  * nextBatchOpen | 2026-04-30
@@ -61,6 +63,8 @@ function doGet(e) {
         countReturned: data.length,
         sheetsUsed: sheetNames,
         excludedDates: excludedDates,
+        batchStatus: normalizeBatchStatusValue(batchConfig.batchStatus),
+        currentBatchLabel: safeString(batchConfig.currentBatchLabel),
         deadlineJoin: asNullableDateString(batchConfig.deadlineJoin),
         remainingQuota: asNullableNumber(batchConfig.remainingQuota),
         nextBatchOpen: asNullableDateString(batchConfig.nextBatchOpen),
@@ -390,6 +394,12 @@ function formatDateValue(value) {
 
 function asNullableDateString(value) {
   return formatDateValue(value) || null;
+}
+
+function normalizeBatchStatusValue(value) {
+  var status = safeString(value).toLowerCase();
+  if (status === 'running' || status === 'closed') return status;
+  return 'open';
 }
 
 function formatDateKey(dateObj) {

@@ -1,29 +1,12 @@
-import Navbar from '@/components/Navbar'
-import Hero from '@/components/Hero'
-import About from '@/components/About'
-import MenuShowcase from '@/components/MenuShowcase'
-import ValueProps from '@/components/ValueProps'
-import HowToOrder from '@/components/HowToOrder'
-import Testimonials from '@/components/Testimonials'
-import CTASection from '@/components/CTASection'
-import Footer from '@/components/Footer'
-import WhatsAppButton from '@/components/WhatsAppButton'
-import MobileBottomBar from '@/components/MobileBottomBar'
+import MainHomePage from '@/components/home/MainHomePage'
+import MenuLandingPage from '@/components/menu-landing/MenuLandingPage'
+
+const siteVariant = process.env.NEXT_PUBLIC_SITE_VARIANT
 
 export default function Home() {
-  return (
-    <main className="min-h-screen bg-cream-50">
-      <Navbar />
-      <Hero />
-      <About />
-      <MenuShowcase />
-      <ValueProps />
-      <HowToOrder />
-      <Testimonials />
-      <CTASection />
-      <Footer />
-      <WhatsAppButton />
-      <MobileBottomBar />
-    </main>
-  )
+  if (siteVariant === 'menu-landing') {
+    return <MenuLandingPage />
+  }
+
+  return <MainHomePage />
 }
