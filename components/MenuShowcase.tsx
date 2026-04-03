@@ -24,9 +24,7 @@ import {
   type MenuItem,
 } from '@/lib/menu'
 
-const MENU_API_URL =
-  process.env.NEXT_PUBLIC_MENU_API_URL ||
-  'https://script.google.com/macros/s/AKfycbxWUPRUQcCVJekUy5vd03ksKM_Cw0KQKslUyLiXklQRzaSn2Z-GmKqCKc7QuYKjTHwR/exec'
+const MENU_API_URL = '/api/public-menu'
 
 export default function MenuSection() {
   const { ref, inView } = useInView(0.1)
@@ -48,7 +46,7 @@ export default function MenuSection() {
     setError('')
 
     try {
-      const response = await fetch(`${MENU_API_URL}?count=20`, { cache: 'no-store' })
+      const response = await fetch(MENU_API_URL, { cache: 'no-store' })
 
       if (!response.ok) {
         throw new Error('Failed to fetch menu data')
