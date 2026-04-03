@@ -71,7 +71,7 @@ export default function Navbar() {
                 </a>
               ))}
               <a
-                href="https://wa.me/6281234567890?text=Halo%20Tameroll%2C%20saya%20ingin%20memesan"
+                href="https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20ingin%20memesan"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ml-4 px-5 py-2.5 bg-terracotta-500 hover:bg-terracotta-600 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-terracotta-500/25 hover:-translate-y-0.5"
@@ -134,7 +134,7 @@ export default function Navbar() {
                   </motion.a>
                 ))}
                 <motion.a
-                  href="https://wa.me/6281234567890?text=Halo%20Tameroll%2C%20saya%20ingin%20memesan"
+                  href="https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20ingin%20memesan"
                   target="_blank"
                   rel="noopener noreferrer"
                   initial={{ opacity: 0, y: 10 }}

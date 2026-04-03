@@ -46,7 +46,7 @@ export default function WhatsAppButton() {
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-        href="https://wa.me/6281234567890?text=Halo%20Tameroll%2C%20saya%20ingin%20bertanya%20tentang%20menu"
+        href="https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20ingin%20bertanya%20tentang%20menu"
         target="_blank"
         rel="noopener noreferrer"
         className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#25D366] hover:bg-[#20BD5A] flex items-center justify-center shadow-2xl shadow-[#25D366]/30 hover:shadow-[#25D366]/50 transition-all duration-300 hover:scale-110"

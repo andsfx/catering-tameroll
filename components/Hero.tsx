@@ -62,7 +62,7 @@ export default function Hero() {
             className="flex flex-col sm:flex-row gap-4"
           >
             <a
-              href="https://wa.me/6281234567890?text=Halo%20Tameroll%2C%20saya%20ingin%20memesan%20catering"
+              href="https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20ingin%20memesan%20catering"
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center justify-center gap-2 px-7 py-4 bg-terracotta-500 hover:bg-terracotta-600 text-white font-semibold rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-terracotta-500/30 hover:-translate-y-1"

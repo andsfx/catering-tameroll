@@ -32,7 +32,7 @@ export default function CTASection() {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <a
-                href="https://wa.me/6281234567890?text=Halo%20Tameroll%2C%20saya%20ingin%20konsultasi%20menu"
+                href="https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20ingin%20konsultasi%20menu"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-terracotta-600 font-bold rounded-2xl hover:bg-cream-50 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
@@ -54,7 +54,7 @@ export default function CTASection() {
             className="space-y-5"
           >
             {[
-              { icon: Phone, label: 'Telepon / WhatsApp', value: '+62 812-3456-7890', href: 'tel:+6281234567890' },
+              { icon: Phone, label: 'Telepon / WhatsApp', value: '+62 851-8324-8797', href: 'tel:+6285183248797' },
               { icon: MapPin, label: 'Lokasi', value: 'Jakarta Selatan, Indonesia', href: '#' },
               { icon: Clock, label: 'Jam Operasional', value: 'Senin - Sabtu: 08.00 - 20.00', href: '#' },
             ].map((item) => (

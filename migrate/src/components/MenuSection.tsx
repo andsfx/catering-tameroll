@@ -158,7 +158,7 @@ export default function MenuSection() {
 
                   {/* CTA */}
                   <a
-                    href={`https://wa.me/6281234567890?text=Halo%20Tameroll%2C%20saya%20tertarik%20dengan%20${encodeURIComponent(item.name)}`}
+                    href={`https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20tertarik%20dengan%20${encodeURIComponent(item.name)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-terracotta-500 hover:text-terracotta-600 font-semibold text-sm group/link transition-colors"

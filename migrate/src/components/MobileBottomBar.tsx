@@ -40,7 +40,7 @@ export default function MobileBottomBar() {
           ))}
           {/* Order CTA */}
           <a
-            href="https://wa.me/6281234567890?text=Halo%20Tameroll%2C%20saya%20ingin%20memesan"
+            href="https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20ingin%20memesan"
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl bg-terracotta-500 text-white"
