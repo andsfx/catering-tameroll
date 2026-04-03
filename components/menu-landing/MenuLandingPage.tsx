@@ -112,27 +112,55 @@ export default function MenuLandingPage() {
         <HowToOrder variant="batch" />
       </div>
 
-      <section className="bg-white py-20 sm:py-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <section className="bg-white pb-8 pt-0 sm:pb-10">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-[18px] border border-[#ece7de] bg-[linear-gradient(135deg,#fff8f2_0%,#ffffff_100%)] px-6 py-7 text-center shadow-[0_12px_34px_rgba(0,0,0,0.05)] sm:px-8">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">
+              Setelah Paham Alurnya
+            </p>
+            <h2 className="mt-3 font-serif text-[1.8rem] leading-tight tracking-[-0.02em] text-[#2C3E50] sm:text-[2.15rem]">
+              Lanjut ke Batch Aktif atau Hubungi Admin
+            </h2>
+            <p className="mx-auto mt-4 max-w-3xl text-[15px] leading-7 text-charcoal-600 sm:text-base">
+              Jika batch masih dibuka, Anda bisa langsung konfirmasi ke admin. Jika batch sudah berjalan, admin akan bantu masukkan Anda ke waiting list berikutnya.
+            </p>
+            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+              <a
+                href="#batch-aktif"
+                className="inline-flex items-center justify-center rounded-[12px] bg-[#D35400] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#B94600]"
+              >
+                Lihat Batch Aktif
+              </a>
+              <a
+                href="https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20ingin%20konfirmasi%20atau%20bertanya%20tentang%20batch%20catering."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-[12px] border border-[#2C3E50] px-6 py-3.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"
+              >
+                Konfirmasi ke Admin
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">
               Kenapa Sistem Batch
             </p>
-            <h2 className="mt-3 font-serif text-[2rem] leading-tight tracking-[-0.02em] text-[#2C3E50] sm:text-[2.4rem]">
-              Lebih Tertata untuk Produksi dan Pengiriman
+            <h2 className="mt-3 font-serif text-[1.9rem] leading-tight tracking-[-0.02em] text-[#2C3E50] sm:text-[2.2rem]">
+              Lebih Jelas untuk Customer, Lebih Stabil untuk Produksi
             </h2>
-            <p className="mt-4 text-[15px] leading-8 text-charcoal-600 sm:text-base">
-              Sistem batch membantu tim produksi menjaga kualitas, mengatur kapasitas, dan memastikan customer mendapat jadwal pengiriman yang lebih terukur.
-            </p>
           </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
             {[
-              ['Konfirmasi Lebih Jelas', 'Admin akan mengarahkan Anda ke batch yang masih dibuka atau ke waiting list jika batch sudah berjalan.'],
-              ['Kapasitas Terkontrol', 'Kuota dan deadline bisa dipantau sehingga proses produksi tidak overbooked.'],
-              ['Menu Tetap Transparan', 'Customer tetap bisa melihat referensi menu 4 minggu penuh sebelum memutuskan join batch.'],
+              ['Konfirmasi Lebih Jelas', 'Customer tidak perlu menebak slot mana yang masih bisa diproses. Admin langsung mengarahkan ke batch aktif atau waiting list berikutnya.'],
+              ['Kapasitas Lebih Terkontrol', 'Tim produksi bisa menjaga kuota, deadline, dan ritme pengiriman tanpa overbooked, sementara customer tetap mendapat referensi menu yang transparan.'],
             ].map(([title, desc]) => (
-              <div key={title} className="rounded-[14px] border border-[#ece7de] bg-[#fcfaf6] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
-                <h3 className="font-semibold text-[#2C3E50]">{title}</h3>
+              <div key={title} className="rounded-[16px] border border-[#ece7de] bg-[#fcfaf6] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
+                <h3 className="text-lg font-semibold text-[#2C3E50]">{title}</h3>
                 <p className="mt-3 text-[15px] leading-7 text-charcoal-600">{desc}</p>
               </div>
             ))}
