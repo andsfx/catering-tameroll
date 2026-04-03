@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { requireAdminSession } from '@/lib/auth/admin-session'
 import { setActiveBatch, updateBatch } from '@/lib/data/batches'
+import { deleteBatchSlot, upsertBatchSlot } from '@/lib/data/batch-slots'
 
 export async function updateBatchAction(batchId: string, _prevState: { error?: string; success?: string } | undefined, formData: FormData) {
   await requireAdminSession()
@@ -43,4 +44,50 @@ export async function updateBatchAction(batchId: string, _prevState: { error?: s
   } catch (error) {
     return { error: error instanceof Error ? error.message : 'Gagal memperbarui batch.' }
   }
+}
+
+export async function upsertBatchSlotAction(
+  batchId: string,
+  _prevState: { error?: string; success?: string } | undefined,
+  formData: FormData
+) {
+  await requireAdminSession()
+
+  const slotId = String(formData.get('slotId') || '').trim()
+  const date = String(formData.get('date') || '').trim()
+  const dayName = String(formData.get('dayName') || '').trim()
+  const sortOrderRaw = String(formData.get('sortOrder') || '0').trim()
+
+  if (!date || !dayName) {
+    return { error: 'Tanggal dan nama hari wajib diisi.' }
+  }
+
+  try {
+    await upsertBatchSlot({
+      id: slotId || undefined,
+      batch_id: batchId,
+      date,
+      day_name: dayName,
+      main_course: String(formData.get('mainCourse') || '').trim() || null,
+      side_dish: String(formData.get('sideDish') || '').trim() || null,
+      extra: String(formData.get('extra') || '').trim() || null,
+      image_url: String(formData.get('imageUrl') || '').trim() || null,
+      label: String(formData.get('label') || '').trim() || null,
+      is_available: formData.get('isAvailable') === 'on',
+      sort_order: Number(sortOrderRaw || '0'),
+    })
+
+    revalidatePath(`/admin/batches/${batchId}`)
+    revalidatePath('/api/public-menu')
+    return { success: 'Slot batch berhasil disimpan.' }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Gagal menyimpan slot batch.' }
+  }
+}
+
+export async function deleteBatchSlotAction(batchId: string, slotId: string) {
+  await requireAdminSession()
+  await deleteBatchSlot(slotId)
+  revalidatePath(`/admin/batches/${batchId}`)
+  revalidatePath('/api/public-menu')
 }

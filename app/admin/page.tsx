@@ -23,9 +23,21 @@ export default async function AdminDashboardPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
+            <Link href="/admin/join-requests" className="rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white">
+              Join Requests
+            </Link>
             <Link href="/admin/settings" className="rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white">
               Ganti Password
             </Link>
+            <form action={async () => {
+              'use server'
+              const { logoutAdmin } = await import('./actions')
+              await logoutAdmin()
+            }}>
+              <button type="submit" className="rounded-[12px] bg-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#223240]">
+                Logout
+              </button>
+            </form>
           </div>
         </div>
 
