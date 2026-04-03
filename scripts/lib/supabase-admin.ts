@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import type { BatchInsert, HolidayRow, ImportSummary, MigrationEnv, SlotInsert } from './types'
+import type { BatchInsert, HolidayRow, ImportSummary, MigrationEnv, SlotInsert, SupabaseScriptEnv } from './types'
 
-export function createSupabaseAdminClient(env: MigrationEnv): SupabaseClient {
+export function createSupabaseAdminClient(env: Pick<MigrationEnv | SupabaseScriptEnv, 'supabaseUrl' | 'supabaseServiceRoleKey'>): SupabaseClient {
   return createClient(env.supabaseUrl, env.supabaseServiceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
