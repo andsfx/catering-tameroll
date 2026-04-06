@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { requireAdminSession } from '@/lib/auth/admin-session'
+import AdminShell from '@/components/admin/AdminShell'
 import { getAllBatches } from '@/lib/data/batches'
 import { getJoinRequestStats } from '@/lib/data/join-requests'
 
@@ -24,39 +25,13 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
   const activeBatch = batches.find((batch) => batch.is_active)
 
   return (
-    <main className="min-h-screen bg-[#FDFBF7] px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">
-              Admin Dashboard
-            </p>
-            <h1 className="mt-2 font-serif text-[2.2rem] leading-tight tracking-[-0.02em] text-[#2C3E50]">
-              Kelola Batch Tameroll
-            </h1>
-            <p className="mt-2 text-[15px] leading-7 text-charcoal-600">
-              Login sebagai <span className="font-semibold text-[#2C3E50]">{session.username}</span>. Ubah status batch, kuota, deadline join, dan batch aktif yang tampil di landing page.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/admin/join-requests" className="rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white">
-              Join Requests
-            </Link>
-            <Link href="/admin/settings" className="rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white">
-              Ganti Password
-            </Link>
-            <form action={async () => {
-              'use server'
-              const { logoutAdmin } = await import('./actions')
-              await logoutAdmin()
-            }}>
-              <button type="submit" className="rounded-[12px] bg-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#223240]">
-                Logout
-              </button>
-            </form>
-          </div>
-        </div>
-
+    <AdminShell
+      currentSection="dashboard"
+      eyebrow="Admin Dashboard"
+      title="Kelola Batch Tameroll"
+      description="Ubah status batch, kuota, deadline join, dan batch aktif yang tampil di landing page."
+      username={session.username}
+    >
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-[16px] border border-[#ece7de] bg-white p-5 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
             <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-charcoal-400">Batch Aktif</p>
@@ -142,7 +117,6 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
             ))}
           </div>
         </div>
-      </div>
-    </main>
+    </AdminShell>
   )
 }

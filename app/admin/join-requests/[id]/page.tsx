@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAdminSession } from '@/lib/auth/admin-session'
+import AdminShell from '@/components/admin/AdminShell'
 import JoinRequestStatusForm from '@/components/admin/JoinRequestStatusForm'
 import { getJoinRequestById } from '@/lib/data/join-requests'
 
@@ -25,25 +26,14 @@ export default async function AdminJoinRequestDetailPage({ params }: Props) {
   }
 
   return (
-    <main className="min-h-screen bg-[#FDFBF7] px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-5xl space-y-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">
-              Join Request Detail
-            </p>
-            <h1 className="mt-2 font-serif text-[2rem] leading-tight tracking-[-0.02em] text-[#2C3E50]">
-              {request.full_name}
-            </h1>
-            <p className="mt-2 text-[15px] leading-7 text-charcoal-600">
-              Review detail pendaftaran, cek bukti pembayaran, dan simpan status serta catatan internal admin.
-            </p>
-          </div>
-          <Link href="/admin/join-requests" className="rounded-[12px] border border-[#2C3E50] px-4 py-2 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white">
-            Kembali ke Join Requests
-          </Link>
-        </div>
-
+    <AdminShell
+      currentSection="join-requests"
+      eyebrow="Join Request Detail"
+      title={request.full_name}
+      description="Review detail pendaftaran, cek bukti pembayaran, dan simpan status serta catatan internal admin."
+      backHref="/admin/join-requests"
+      backLabel="Kembali ke Join Requests"
+    >
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-6">
             <div className="rounded-[18px] border border-[#ece7de] bg-white p-6 shadow-[0_18px_48px_rgba(0,0,0,0.06)]">
@@ -92,7 +82,6 @@ export default async function AdminJoinRequestDetailPage({ params }: Props) {
             </div>
           </div>
         </div>
-      </div>
-    </main>
+    </AdminShell>
   )
 }
