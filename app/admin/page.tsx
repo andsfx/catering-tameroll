@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { requireAdminSession } from '@/lib/auth/admin-session'
 import { getAllBatches } from '@/lib/data/batches'
+import { getJoinRequestStats } from '@/lib/data/join-requests'
 
 export default async function AdminDashboardPage() {
   const session = await requireAdminSession()
-  const batches = await getAllBatches()
+  const [batches, requestStats] = await Promise.all([getAllBatches(), getJoinRequestStats()])
   const activeBatch = batches.find((batch) => batch.is_active)
 
   return (
@@ -54,6 +55,25 @@ export default async function AdminDashboardPage() {
             <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-charcoal-400">Status Aktif</p>
             <h2 className="mt-3 text-lg font-semibold text-[#2C3E50]">{activeBatch?.status || '-'}</h2>
           </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-4">
+          <Link href="/admin/join-requests?status=new" className="rounded-[16px] border border-amber-200 bg-amber-50 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition hover:-translate-y-0.5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-amber-700">Request Baru</p>
+            <h2 className="mt-3 text-2xl font-semibold text-amber-950">{requestStats.newCount}</h2>
+          </Link>
+          <Link href="/admin/join-requests?status=verified" className="rounded-[16px] border border-emerald-200 bg-emerald-50 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition hover:-translate-y-0.5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-700">Verified</p>
+            <h2 className="mt-3 text-2xl font-semibold text-emerald-950">{requestStats.verifiedCount}</h2>
+          </Link>
+          <Link href="/admin/join-requests?status=waitlisted" className="rounded-[16px] border border-sky-200 bg-sky-50 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition hover:-translate-y-0.5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-sky-700">Waitlisted</p>
+            <h2 className="mt-3 text-2xl font-semibold text-sky-950">{requestStats.waitlistedCount}</h2>
+          </Link>
+          <Link href="/admin/join-requests?status=rejected" className="rounded-[16px] border border-rose-200 bg-rose-50 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition hover:-translate-y-0.5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-rose-700">Rejected</p>
+            <h2 className="mt-3 text-2xl font-semibold text-rose-950">{requestStats.rejectedCount}</h2>
+          </Link>
         </div>
 
         <div className="rounded-[18px] border border-[#ece7de] bg-white shadow-[0_18px_48px_rgba(0,0,0,0.08)]">

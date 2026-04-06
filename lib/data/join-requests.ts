@@ -1,6 +1,14 @@
 import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 import { createPaymentProofSignedUrl } from '@/lib/storage/payment-proofs'
 
+type JoinRequestStatus = 'new' | 'verified' | 'rejected' | 'waitlisted'
+
+type JoinRequestQuery = {
+  status?: 'all' | JoinRequestStatus
+  search?: string
+  sort?: 'newest' | 'oldest'
+}
+
 export type JoinRequestRecord = {
   id: string
   batch_id: string
@@ -13,16 +21,52 @@ export type JoinRequestRecord = {
   batches: { name: string } | null
 }
 
-export async function getJoinRequests() {
+export async function getJoinRequests(options: JoinRequestQuery = {}) {
   const supabase = createSupabaseAdminClient()
-  const { data, error } = await supabase
+  let query = supabase
     .from('join_requests')
     .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,created_at,batches(name)')
-    .order('created_at', { ascending: false })
+
+  if (options.status && options.status !== 'all') {
+    query = query.eq('status', options.status)
+  }
+
+  if (options.search?.trim()) {
+    const search = options.search.trim()
+    query = query.or(`full_name.ilike.%${search}%,phone.ilike.%${search}%`)
+  }
+
+  const ascending = options.sort === 'oldest'
+
+  const { data, error } = await query
+    .order('created_at', { ascending })
     .returns<JoinRequestRecord[]>()
 
   if (error) throw error
   return data || []
+}
+
+export async function getJoinRequestStats() {
+  const supabase = createSupabaseAdminClient()
+
+  const [newResult, verifiedResult, rejectedResult, waitlistedResult] = await Promise.all([
+    supabase.from('join_requests').select('id', { count: 'exact', head: true }).eq('status', 'new'),
+    supabase.from('join_requests').select('id', { count: 'exact', head: true }).eq('status', 'verified'),
+    supabase.from('join_requests').select('id', { count: 'exact', head: true }).eq('status', 'rejected'),
+    supabase.from('join_requests').select('id', { count: 'exact', head: true }).eq('status', 'waitlisted'),
+  ])
+
+  if (newResult.error) throw newResult.error
+  if (verifiedResult.error) throw verifiedResult.error
+  if (rejectedResult.error) throw rejectedResult.error
+  if (waitlistedResult.error) throw waitlistedResult.error
+
+  return {
+    newCount: newResult.count || 0,
+    verifiedCount: verifiedResult.count || 0,
+    rejectedCount: rejectedResult.count || 0,
+    waitlistedCount: waitlistedResult.count || 0,
+  }
 }
 
 export async function createJoinRequest(input: {

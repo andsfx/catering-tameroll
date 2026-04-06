@@ -19,6 +19,9 @@ export default async function AdminBatchDetailPage({ params }: Props) {
     notFound()
   }
 
+  const availableSlots = slots.filter((slot) => slot.is_available).length
+  const unavailableSlots = slots.length - availableSlots
+
   return (
     <main className="min-h-screen bg-[#FDFBF7] px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-6">
@@ -43,6 +46,21 @@ export default async function AdminBatchDetailPage({ params }: Props) {
 
         <div className="rounded-[18px] border border-[#ece7de] bg-white p-8 shadow-[0_18px_48px_rgba(0,0,0,0.08)]">
           <BatchEditForm batch={batch} />
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-[16px] border border-[#ece7de] bg-white p-5 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-charcoal-400">Total Slot</p>
+            <h2 className="mt-3 text-lg font-semibold text-[#2C3E50]">{slots.length}</h2>
+          </div>
+          <div className="rounded-[16px] border border-emerald-200 bg-emerald-50 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-700">Slot Tersedia</p>
+            <h2 className="mt-3 text-lg font-semibold text-emerald-950">{availableSlots}</h2>
+          </div>
+          <div className="rounded-[16px] border border-slate-200 bg-slate-50 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.05)]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-600">Slot Nonaktif</p>
+            <h2 className="mt-3 text-lg font-semibold text-slate-900">{unavailableSlots}</h2>
+          </div>
         </div>
 
         <div className="rounded-[18px] border border-[#ece7de] bg-white p-8 shadow-[0_18px_48px_rgba(0,0,0,0.08)]">
