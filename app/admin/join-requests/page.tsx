@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { requireAdminSession } from '@/lib/auth/admin-session'
 import AdminShell from '@/components/admin/AdminShell'
+import PaymentProofPreviewButton from '@/components/admin/PaymentProofPreviewButton'
 import JoinRequestStatusForm from '@/components/admin/JoinRequestStatusForm'
 import { getJoinRequests } from '@/lib/data/join-requests'
 
@@ -100,12 +101,7 @@ export default async function AdminJoinRequestsPage({ searchParams }: Props) {
                     >
                       Lihat Detail Request
                     </Link>
-                    <a
-                      href={`/admin/join-requests/${request.id}/proof`}
-                      className="inline-flex w-full items-center justify-center rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"
-                    >
-                      Lihat Bukti Pembayaran
-                    </a>
+                    <PaymentProofPreviewButton requestId={request.id} requesterName={request.full_name} />
                     <JoinRequestStatusForm
                       requestId={request.id}
                       currentStatus={request.status}

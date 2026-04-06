@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { requireAdminSession } from '@/lib/auth/admin-session'
 import AdminShell from '@/components/admin/AdminShell'
+import PaymentProofPreviewButton from '@/components/admin/PaymentProofPreviewButton'
 import JoinRequestStatusForm from '@/components/admin/JoinRequestStatusForm'
 import { getJoinRequestById } from '@/lib/data/join-requests'
 
@@ -58,12 +59,7 @@ export default async function AdminJoinRequestDetailPage({ params }: Props) {
                 File tersimpan di private bucket Supabase dan hanya bisa diakses admin melalui signed URL sementara.
               </p>
               <div className="mt-5">
-                <a
-                  href={`/admin/join-requests/${request.id}/proof`}
-                  className="inline-flex items-center justify-center rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"
-                >
-                  Lihat Bukti Pembayaran
-                </a>
+                <PaymentProofPreviewButton requestId={request.id} requesterName={request.full_name} />
               </div>
             </div>
           </div>
