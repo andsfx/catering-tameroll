@@ -69,6 +69,15 @@ export default async function AdminJoinRequestsPage({ searchParams }: Props) {
           </button>
         </form>
 
+        <div className="flex justify-end">
+          <Link
+            href={`/admin/join-requests/export?status=${encodeURIComponent(status)}&search=${encodeURIComponent(search)}&sort=${encodeURIComponent(sort)}`}
+            className="rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"
+          >
+            Export CSV
+          </Link>
+        </div>
+
         <div className="rounded-[18px] border border-[#ece7de] bg-white shadow-[0_18px_48px_rgba(0,0,0,0.08)]">
           <div className="divide-y divide-[#ece7de]">
             {requests.length === 0 ? (
@@ -101,7 +110,11 @@ export default async function AdminJoinRequestsPage({ searchParams }: Props) {
                     >
                       Lihat Bukti Pembayaran
                     </a>
-                    <JoinRequestStatusForm requestId={request.id} currentStatus={request.status} />
+                    <JoinRequestStatusForm
+                      requestId={request.id}
+                      currentStatus={request.status}
+                      currentInternalNotes={request.internal_notes}
+                    />
                   </div>
                 </div>
               ))

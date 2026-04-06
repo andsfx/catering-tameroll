@@ -10,9 +10,11 @@ import { emptyAdminFormState } from '@/lib/forms/admin-form-state'
 export default function JoinRequestStatusForm({
   requestId,
   currentStatus,
+  currentInternalNotes,
 }: {
   requestId: string
   currentStatus: 'new' | 'verified' | 'rejected' | 'waitlisted'
+  currentInternalNotes?: string | null
 }) {
   const action = useMemo(() => updateJoinRequestStatusAction.bind(null, requestId), [requestId])
   const [state, formAction] = useFormState(action, emptyAdminFormState)
@@ -30,6 +32,13 @@ export default function JoinRequestStatusForm({
         <option value="rejected">rejected</option>
         <option value="waitlisted">waitlisted</option>
       </select>
+      <textarea
+        name="internalNotes"
+        defaultValue={currentInternalNotes ?? ''}
+        rows={4}
+        placeholder="Catatan internal admin"
+        className="w-full rounded-[12px] border border-[#ddd4c7] px-4 py-3 text-sm outline-none transition focus:border-[#D35400]"
+      />
       <SubmitButton idleText="Simpan Status Request" pendingText="Menyimpan Status..." className="w-full bg-[#D35400] hover:bg-[#B94600]" />
     </form>
   )

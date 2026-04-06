@@ -14,15 +14,32 @@ export type BatchSlotRecord = {
   sort_order: number
 }
 
-export async function getBatchSlots(batchId: string) {
+type BatchSlotQuery = {
+  status?: 'all' | 'available' | 'disabled'
+  search?: string
+}
+
+export async function getBatchSlots(batchId: string, options: BatchSlotQuery = {}) {
   const supabase = createSupabaseAdminClient()
-  const { data, error } = await supabase
+  let query = supabase
     .from('batch_slots')
     .select('id,batch_id,date,day_name,main_course,side_dish,extra,image_url,is_available,label,sort_order')
     .eq('batch_id', batchId)
-    .order('date', { ascending: true })
-    .order('sort_order', { ascending: true })
-    .returns<BatchSlotRecord[]>()
+
+  if (options.status === 'available') {
+    query = query.eq('is_available', true)
+  }
+
+  if (options.status === 'disabled') {
+    query = query.eq('is_available', false)
+  }
+
+  if (options.search?.trim()) {
+    const search = options.search.trim()
+    query = query.or(`main_course.ilike.%${search}%,day_name.ilike.%${search}%,date.ilike.%${search}%`)
+  }
+
+  const { data, error } = await query.order('date', { ascending: true }).order('sort_order', { ascending: true }).returns<BatchSlotRecord[]>()
 
   if (error) throw error
   return data || []

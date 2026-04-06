@@ -17,6 +17,7 @@ export type JoinRequestRecord = {
   payment_proof_url: string
   status: 'new' | 'verified' | 'rejected' | 'waitlisted'
   notes: string | null
+  internal_notes: string | null
   created_at: string
   batches: { name: string } | null
 }
@@ -25,7 +26,7 @@ export async function getJoinRequests(options: JoinRequestQuery = {}) {
   const supabase = createSupabaseAdminClient()
   let query = supabase
     .from('join_requests')
-    .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,created_at,batches(name)')
+    .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,internal_notes,created_at,batches(name)')
 
   if (options.status && options.status !== 'all') {
     query = query.eq('status', options.status)
@@ -86,23 +87,29 @@ export async function createJoinRequest(input: {
       payment_proof_url: input.paymentProofUrl,
       notes: input.notes ?? null,
     })
-    .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,created_at')
+    .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,internal_notes,created_at')
     .single()
 
   if (error) throw error
   return data
 }
 
-export async function updateJoinRequestStatus(
+export async function updateJoinRequestReview(
   requestId: string,
-  status: 'new' | 'verified' | 'rejected' | 'waitlisted'
+  input: {
+    status: 'new' | 'verified' | 'rejected' | 'waitlisted'
+    internalNotes: string | null
+  }
 ) {
   const supabase = createSupabaseAdminClient()
   const { data, error } = await supabase
     .from('join_requests')
-    .update({ status })
+    .update({
+      status: input.status,
+      internal_notes: input.internalNotes,
+    })
     .eq('id', requestId)
-    .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,created_at,batches(name)')
+    .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,internal_notes,created_at,batches(name)')
     .single<JoinRequestRecord>()
 
   if (error) throw error
@@ -113,7 +120,7 @@ export async function getJoinRequestById(requestId: string) {
   const supabase = createSupabaseAdminClient()
   const { data, error } = await supabase
     .from('join_requests')
-    .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,created_at,batches(name)')
+    .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,internal_notes,created_at,batches(name)')
     .eq('id', requestId)
     .single<JoinRequestRecord>()
 
@@ -123,4 +130,36 @@ export async function getJoinRequestById(requestId: string) {
 
 export async function getPaymentProofSignedUrl(storagePath: string) {
   return createPaymentProofSignedUrl(storagePath, 60)
+}
+
+export function toJoinRequestsCsv(rows: JoinRequestRecord[]) {
+  const headers = [
+    'created_at',
+    'batch_name',
+    'full_name',
+    'phone',
+    'status',
+    'notes',
+    'internal_notes',
+    'payment_proof_url',
+  ]
+
+  const escape = (value: string | null | undefined) => `"${(value ?? '').replaceAll('"', '""')}"`
+
+  const lines = rows.map((row) =>
+    [
+      row.created_at,
+      row.batches?.name || '',
+      row.full_name,
+      row.phone,
+      row.status,
+      row.notes,
+      row.internal_notes,
+      row.payment_proof_url,
+    ]
+      .map((value) => escape(value))
+      .join(',')
+  )
+
+  return [headers.join(','), ...lines].join('\n')
 }

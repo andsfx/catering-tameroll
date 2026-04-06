@@ -8,19 +8,30 @@ import { getBatchSlots } from '@/lib/data/batch-slots'
 
 type Props = {
   params: Promise<{ id: string }>
+  searchParams: Promise<{
+    slot?: 'all' | 'available' | 'disabled'
+    search?: string
+  }>
 }
 
-export default async function AdminBatchDetailPage({ params }: Props) {
+export default async function AdminBatchDetailPage({ params, searchParams }: Props) {
   await requireAdminSession()
   const { id } = await params
-  const [batch, slots] = await Promise.all([getBatchById(id), getBatchSlots(id)])
+  const filters = await searchParams
+  const slotFilter = filters.slot || 'all'
+  const slotSearch = filters.search || ''
+  const [batch, slots, allSlots] = await Promise.all([
+    getBatchById(id),
+    getBatchSlots(id, { status: slotFilter, search: slotSearch }),
+    getBatchSlots(id),
+  ])
 
   if (!batch) {
     notFound()
   }
 
-  const availableSlots = slots.filter((slot) => slot.is_available).length
-  const unavailableSlots = slots.length - availableSlots
+  const availableSlots = allSlots.filter((slot) => slot.is_available).length
+  const unavailableSlots = allSlots.length - availableSlots
 
   return (
     <main className="min-h-screen bg-[#FDFBF7] px-4 py-10 sm:px-6 lg:px-8">
@@ -72,6 +83,23 @@ export default async function AdminBatchDetailPage({ params }: Props) {
               CRUD Slot Menu
             </h2>
           </div>
+
+          <form method="get" className="mb-6 grid gap-4 rounded-[16px] border border-[#ece7de] bg-[#fcfaf6] p-4 md:grid-cols-[1fr_180px_auto]">
+            <input
+              name="search"
+              defaultValue={slotSearch}
+              placeholder="Cari tanggal, hari, atau menu"
+              className="w-full rounded-[12px] border border-[#ddd4c7] px-4 py-3 text-sm outline-none transition focus:border-[#D35400]"
+            />
+            <select name="slot" defaultValue={slotFilter} className="w-full rounded-[12px] border border-[#ddd4c7] px-4 py-3 text-sm outline-none transition focus:border-[#D35400]">
+              <option value="all">Semua Slot</option>
+              <option value="available">Slot Tersedia</option>
+              <option value="disabled">Slot Nonaktif</option>
+            </select>
+            <button type="submit" className="rounded-[12px] bg-[#D35400] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#B94600]">
+              Filter Slot
+            </button>
+          </form>
 
           <div className="space-y-4">
             {slots.map((slot) => (

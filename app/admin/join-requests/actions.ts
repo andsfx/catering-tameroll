@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { requireAdminSession } from '@/lib/auth/admin-session'
-import { updateJoinRequestStatus } from '@/lib/data/join-requests'
+import { updateJoinRequestReview } from '@/lib/data/join-requests'
 import type { AdminFormState } from '@/lib/forms/admin-form-state'
 
 export async function updateJoinRequestStatusAction(
@@ -13,9 +13,13 @@ export async function updateJoinRequestStatusAction(
   await requireAdminSession()
 
   const status = String(formData.get('status') || 'new') as 'new' | 'verified' | 'rejected' | 'waitlisted'
+  const internalNotes = String(formData.get('internalNotes') || '').trim() || null
 
   try {
-    await updateJoinRequestStatus(requestId, status)
+    await updateJoinRequestReview(requestId, {
+      status,
+      internalNotes,
+    })
     revalidatePath('/admin/join-requests')
     return { error: '', success: 'Status request berhasil diperbarui.' }
   } catch (error) {
