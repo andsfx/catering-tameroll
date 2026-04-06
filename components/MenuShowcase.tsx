@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useInView } from '@/hooks/useInView'
 import MenuCalendar from '@/components/menu/MenuCalendar'
@@ -198,14 +199,22 @@ export default function MenuSection() {
                         </span>
                       </div>
                       {batchOpen ? (
-                        <a
-                          href={batchJoinUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center rounded-[12px] bg-[#D35400] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#B94600]"
-                        >
-                          Konfirmasi Join Batch
-                        </a>
+                        <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+                          <Link
+                            href="/join-batch"
+                            className="inline-flex items-center justify-center rounded-[12px] bg-[#D35400] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#B94600]"
+                          >
+                            Isi Form Join Batch
+                          </Link>
+                          <a
+                            href={batchJoinUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center rounded-[12px] border border-[#2C3E50] bg-white px-5 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"
+                          >
+                            Chat Admin via WhatsApp
+                          </a>
+                        </div>
                       ) : (
                         <>
                           <div className="inline-flex items-center justify-center rounded-[12px] border border-charcoal-200 bg-white px-5 py-3 text-sm font-bold text-charcoal-500 shadow-sm">

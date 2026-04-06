@@ -54,9 +54,7 @@ export default async function AdminJoinRequestsPage() {
 
                   <div className="space-y-3 rounded-[14px] border border-[#ece7de] bg-[#fcfaf6] p-4">
                     <a
-                      href={request.payment_proof_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`/admin/join-requests/${request.id}/proof`}
                       className="inline-flex w-full items-center justify-center rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"
                     >
                       Lihat Bukti Pembayaran

@@ -27,6 +27,18 @@ export async function getAllBatches() {
   return data || []
 }
 
+export async function getActiveBatch() {
+  const supabase = createSupabaseAdminClient()
+  const { data, error } = await supabase
+    .from('batches')
+    .select('id,name,status,deadline_join,remaining_quota,next_batch_open,next_batch_label,start_date,end_date,source_month,notes,is_active')
+    .eq('is_active', true)
+    .single<BatchRecord>()
+
+  if (error) return null
+  return data
+}
+
 export async function getBatchById(batchId: string) {
   const supabase = createSupabaseAdminClient()
   const { data, error } = await supabase

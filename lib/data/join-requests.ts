@@ -1,4 +1,5 @@
 import { createSupabaseAdminClient } from '@/lib/supabase/admin'
+import { createPaymentProofSignedUrl } from '@/lib/storage/payment-proofs'
 
 export type JoinRequestRecord = {
   id: string
@@ -24,6 +25,30 @@ export async function getJoinRequests() {
   return data || []
 }
 
+export async function createJoinRequest(input: {
+  batchId: string
+  fullName: string
+  phone: string
+  paymentProofUrl: string
+  notes?: string | null
+}) {
+  const supabase = createSupabaseAdminClient()
+  const { data, error } = await supabase
+    .from('join_requests')
+    .insert({
+      batch_id: input.batchId,
+      full_name: input.fullName,
+      phone: input.phone,
+      payment_proof_url: input.paymentProofUrl,
+      notes: input.notes ?? null,
+    })
+    .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,created_at')
+    .single()
+
+  if (error) throw error
+  return data
+}
+
 export async function updateJoinRequestStatus(
   requestId: string,
   status: 'new' | 'verified' | 'rejected' | 'waitlisted'
@@ -38,4 +63,20 @@ export async function updateJoinRequestStatus(
 
   if (error) throw error
   return data
+}
+
+export async function getJoinRequestById(requestId: string) {
+  const supabase = createSupabaseAdminClient()
+  const { data, error } = await supabase
+    .from('join_requests')
+    .select('id,batch_id,full_name,phone,payment_proof_url,status,notes,created_at,batches(name)')
+    .eq('id', requestId)
+    .single<JoinRequestRecord>()
+
+  if (error) return null
+  return data
+}
+
+export async function getPaymentProofSignedUrl(storagePath: string) {
+  return createPaymentProofSignedUrl(storagePath, 60)
 }
