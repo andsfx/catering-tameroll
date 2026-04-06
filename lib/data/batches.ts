@@ -1,5 +1,11 @@
 import { createSupabaseAdminClient } from '@/lib/supabase/admin'
 
+type BatchQuery = {
+  status?: 'all' | 'open' | 'running' | 'closed'
+  search?: string
+  sort?: 'newest' | 'oldest'
+}
+
 export type BatchRecord = {
   id: string
   name: string
@@ -15,13 +21,24 @@ export type BatchRecord = {
   is_active: boolean
 }
 
-export async function getAllBatches() {
+export async function getAllBatches(options: BatchQuery = {}) {
   const supabase = createSupabaseAdminClient()
-  const { data, error } = await supabase
+  let query = supabase
     .from('batches')
     .select('id,name,status,deadline_join,remaining_quota,next_batch_open,next_batch_label,start_date,end_date,source_month,notes,is_active')
-    .order('start_date', { ascending: false })
-    .returns<BatchRecord[]>()
+
+  if (options.status && options.status !== 'all') {
+    query = query.eq('status', options.status)
+  }
+
+  if (options.search?.trim()) {
+    const search = options.search.trim()
+    query = query.or(`name.ilike.%${search}%,source_month.ilike.%${search}%`)
+  }
+
+  const ascending = options.sort === 'oldest'
+
+  const { data, error } = await query.order('start_date', { ascending }).returns<BatchRecord[]>()
 
   if (error) throw error
   return data || []

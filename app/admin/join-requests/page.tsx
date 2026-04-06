@@ -104,6 +104,12 @@ export default async function AdminJoinRequestsPage({ searchParams }: Props) {
                   </div>
 
                   <div className="space-y-3 rounded-[14px] border border-[#ece7de] bg-[#fcfaf6] p-4">
+                    <Link
+                      href={`/admin/join-requests/${request.id}`}
+                      className="inline-flex w-full items-center justify-center rounded-[12px] bg-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#223240]"
+                    >
+                      Lihat Detail Request
+                    </Link>
                     <a
                       href={`/admin/join-requests/${request.id}/proof`}
                       className="inline-flex w-full items-center justify-center rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"

@@ -3,9 +3,24 @@ import { requireAdminSession } from '@/lib/auth/admin-session'
 import { getAllBatches } from '@/lib/data/batches'
 import { getJoinRequestStats } from '@/lib/data/join-requests'
 
-export default async function AdminDashboardPage() {
+type Props = {
+  searchParams: Promise<{
+    status?: 'all' | 'open' | 'running' | 'closed'
+    search?: string
+    sort?: 'newest' | 'oldest'
+  }>
+}
+
+export default async function AdminDashboardPage({ searchParams }: Props) {
   const session = await requireAdminSession()
-  const [batches, requestStats] = await Promise.all([getAllBatches(), getJoinRequestStats()])
+  const params = await searchParams
+  const status = params.status || 'all'
+  const search = params.search || ''
+  const sort = params.sort || 'newest'
+  const [batches, requestStats] = await Promise.all([
+    getAllBatches({ status, search, sort }),
+    getJoinRequestStats(),
+  ])
   const activeBatch = batches.find((batch) => batch.is_active)
 
   return (
@@ -75,6 +90,28 @@ export default async function AdminDashboardPage() {
             <h2 className="mt-3 text-2xl font-semibold text-rose-950">{requestStats.rejectedCount}</h2>
           </Link>
         </div>
+
+        <form className="grid gap-4 rounded-[18px] border border-[#ece7de] bg-white p-5 shadow-[0_18px_48px_rgba(0,0,0,0.06)] md:grid-cols-[1fr_180px_160px_auto]" method="get">
+          <input
+            name="search"
+            defaultValue={search}
+            placeholder="Cari nama batch atau bulan sumber"
+            className="w-full rounded-[12px] border border-[#ddd4c7] px-4 py-3 text-sm outline-none transition focus:border-[#D35400]"
+          />
+          <select name="status" defaultValue={status} className="w-full rounded-[12px] border border-[#ddd4c7] px-4 py-3 text-sm outline-none transition focus:border-[#D35400]">
+            <option value="all">Semua Status</option>
+            <option value="open">open</option>
+            <option value="running">running</option>
+            <option value="closed">closed</option>
+          </select>
+          <select name="sort" defaultValue={sort} className="w-full rounded-[12px] border border-[#ddd4c7] px-4 py-3 text-sm outline-none transition focus:border-[#D35400]">
+            <option value="newest">Terbaru</option>
+            <option value="oldest">Terlama</option>
+          </select>
+          <button type="submit" className="rounded-[12px] bg-[#D35400] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#B94600]">
+            Filter Batch
+          </button>
+        </form>
 
         <div className="rounded-[18px] border border-[#ece7de] bg-white shadow-[0_18px_48px_rgba(0,0,0,0.08)]">
           <div className="border-b border-[#ece7de] px-6 py-5">
