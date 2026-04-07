@@ -2,11 +2,41 @@ import MenuShowcase from '@/components/MenuShowcase'
 import HowToOrder from '@/components/HowToOrder'
 import Testimonials from '@/components/Testimonials'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import { getActiveBatch } from '@/lib/data/batches'
+import { formatOptionalLongDate, getBatchStatusLabel } from '@/lib/menu'
 
-export default function MenuLandingPage() {
+export default async function MenuLandingPage() {
+  const activeBatch = await getActiveBatch()
+  const statusLabel = activeBatch ? getBatchStatusLabel(activeBatch.status) : 'Batch Belum Tersedia'
+  const deadlineLabel = activeBatch?.deadline_join ? formatOptionalLongDate(activeBatch.deadline_join) : 'Segera diumumkan'
+  const nextBatchOpenLabel = activeBatch?.next_batch_open ? formatOptionalLongDate(activeBatch.next_batch_open) : 'Akan diumumkan'
+
+  const heroCards = [
+    {
+      label: 'Batch Aktif',
+      value: activeBatch?.name || 'Belum ada batch aktif',
+      meta: statusLabel,
+    },
+    {
+      label: 'Deadline Join',
+      value: deadlineLabel || 'Segera diumumkan',
+      meta: activeBatch?.status === 'open' ? 'Konfirmasi sebelum kuota penuh' : 'Mengikuti status batch aktif',
+    },
+    {
+      label: 'Kuota Tersisa',
+      value: activeBatch?.remaining_quota !== null && activeBatch?.remaining_quota !== undefined ? `${activeBatch.remaining_quota} Slot` : 'Cek via admin',
+      meta: 'Diperbarui dari data batch aktif',
+    },
+    {
+      label: 'Batch Berikutnya',
+      value: nextBatchOpenLabel || 'Akan diumumkan',
+      meta: activeBatch?.next_batch_label || 'Info batch berikutnya akan diupdate oleh admin',
+    },
+  ]
+
   return (
     <main className="min-h-screen bg-[#FDFBF7] text-[#2C3E50]">
-      <section className="relative overflow-hidden bg-[linear-gradient(135deg,#2C3E50_0%,#1F2D3A_60%,#15202A_100%)] px-4 pb-20 pt-8 text-white sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-[linear-gradient(135deg,#2C3E50_0%,#1F2D3A_60%,#15202A_100%)] px-4 pb-14 pt-8 text-white sm:px-6 lg:px-8">
         <div className="absolute inset-0 opacity-10">
           <div
             className="absolute inset-0"
@@ -33,16 +63,16 @@ export default function MenuLandingPage() {
             </a>
           </div>
 
-          <div id="top" className="grid gap-12 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:py-20">
-            <div className="max-w-3xl">
+          <div id="top" className="grid gap-10 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-16">
+            <div className="max-w-2xl">
               <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/85">
-                Landing Page Batch Menu
+                Menu Catering 4 Minggu
               </div>
-              <h1 className="mt-6 font-serif text-4xl leading-[1.02] tracking-[-0.03em] text-white sm:text-5xl lg:text-6xl">
-                Referensi Menu Catering Batch untuk <span className="text-[#F5C39C]">4 Minggu Kerja</span>
+              <h1 className="mt-5 font-serif text-4xl leading-[1.02] tracking-[-0.03em] text-white sm:text-5xl lg:text-[3.8rem]">
+                Jadwal Batch Catering Tameroll
               </h1>
-              <p className="mt-6 max-w-2xl text-[16px] leading-8 text-white/78 sm:text-lg">
-                Lihat menu batch yang sedang aktif, pahami cara join, lalu konfirmasi langsung ke WhatsApp admin. Jika batch sudah berjalan, Anda akan diarahkan ke waiting list batch berikutnya.
+              <p className="mt-5 max-w-xl text-[16px] leading-8 text-white/78 sm:text-lg">
+                Lihat referensi menu batch aktif, cek deadline join, lalu konfirmasi ke admin. Jika batch sudah berjalan, Anda akan diarahkan ke waiting list batch berikutnya.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a
@@ -58,49 +88,33 @@ export default function MenuLandingPage() {
                   Cara Join Batch
                 </a>
               </div>
-              <div className="mt-8 flex flex-wrap gap-3 text-sm text-white/75">
-                <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2">Konfirmasi via WhatsApp</span>
-                <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2">Batch dibuka berkala</span>
-                <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2">Waiting list jika batch berjalan</span>
-              </div>
             </div>
 
-            <div className="rounded-[18px] border border-white/10 bg-white/10 p-6 backdrop-blur-md">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/65">
-                Alur Singkat
-              </p>
-              <div className="mt-5 space-y-4">
-                {[
-                  'Lihat status batch dan timeline menu 4 minggu.',
-                  'Konfirmasi ke admin via WhatsApp sebelum deadline join.',
-                  'Jika batch berjalan atau ditutup, masuk waiting list batch berikutnya.',
-                ].map((line, index) => (
-                  <div key={line} className="flex gap-4 rounded-[14px] border border-white/10 bg-black/10 p-4">
-                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#D35400] text-sm font-bold text-white">
-                      {index + 1}
-                    </div>
-                    <p className="text-sm leading-7 text-white/80">{line}</p>
-                  </div>
-                ))}
+            <div className="space-y-4">
+              {heroCards.map((card) => (
+                <div
+                  key={card.label}
+                  className="rounded-[18px] border border-white/10 bg-white/10 p-5 backdrop-blur-md shadow-[0_18px_40px_rgba(0,0,0,0.12)]"
+                >
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/60">
+                    {card.label}
+                  </p>
+                  <h2 className="mt-3 font-serif text-[1.7rem] leading-tight tracking-[-0.02em] text-white sm:text-[1.9rem]">
+                    {card.value}
+                  </h2>
+                  <p className="mt-2 text-sm leading-7 text-white/72">{card.meta}</p>
+                </div>
+              ))}
+              <div className="rounded-[18px] border border-[#F5C39C]/20 bg-[#F5C39C]/10 p-5 text-[#FBE5D1] backdrop-blur-md">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#FBE5D1]/80">
+                  Catatan
+                </p>
+                <p className="mt-3 text-[15px] leading-7">
+                  Semua jadwal di halaman ini adalah referensi batch. Join batch tetap harus dikonfirmasi ke admin.
+                </p>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="relative z-10 -mt-10 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-3">
-          {[
-            ['Sebelum Konfirmasi', 'Pastikan status batch masih dibuka agar admin bisa memasukkan Anda ke batch aktif.'],
-            ['Saat Batch Berjalan', 'Jika batch sudah berjalan, admin akan mengarahkan Anda ke waiting list batch berikutnya.'],
-            ['Yang Dilihat di Halaman Ini', 'Timeline menu adalah referensi 4 minggu kerja untuk membantu Anda memilih batch yang paling relevan.'],
-          ].map(([title, desc]) => (
-            <div key={title} className="rounded-[16px] border border-[#ece7de] bg-white p-5 shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">Panduan Singkat</p>
-              <h2 className="mt-3 text-lg font-semibold text-[#2C3E50]">{title}</h2>
-              <p className="mt-3 text-[15px] leading-7 text-charcoal-600">{desc}</p>
-            </div>
-          ))}
         </div>
       </section>
 

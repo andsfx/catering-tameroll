@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type ProofResponse = {
   signedUrl: string
@@ -23,6 +23,26 @@ export default function PaymentProofPreviewButton({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [proof, setProof] = useState<ProofResponse | null>(null)
+
+  useEffect(() => {
+    if (!open) return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
 
   async function openPreview() {
     setOpen(true)
@@ -71,16 +91,23 @@ export default function PaymentProofPreviewButton({
                 </p>
                 <h2 className="mt-2 text-lg font-semibold text-[#2C3E50]">{requesterName}</h2>
               </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="rounded-[12px] border border-[#2C3E50] px-3 py-2 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"
-              >
-                Tutup
-              </button>
+              <div className="flex items-center gap-3">
+                {proof ? (
+                  <span className="rounded-full bg-[#faf9f6] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-charcoal-500">
+                    {proof.fileType === 'pdf' ? 'PDF' : proof.fileType === 'image' ? 'Image' : 'File'}
+                  </span>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="rounded-[12px] border border-[#2C3E50] px-3 py-2 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"
+                >
+                  Tutup
+                </button>
+              </div>
             </div>
 
-            <div className="px-5 py-5 sm:px-6">
+            <div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-5 py-5 sm:px-6">
               {loading ? (
                 <div className="flex min-h-[420px] items-center justify-center rounded-[16px] border border-[#ece7de] bg-[#faf9f6]">
                   <div className="flex items-center gap-3 text-sm font-semibold text-charcoal-600">
@@ -101,11 +128,11 @@ export default function PaymentProofPreviewButton({
                 </div>
               ) : proof ? (
                 <div className="space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-sm text-charcoal-500">{proof.fileName}</p>
-                    <a
-                      href={proof.signedUrl}
-                      target="_blank"
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-sm text-charcoal-500">{proof.fileName}</p>
+                      <a
+                        href={proof.signedUrl}
+                        target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-[12px] border border-[#2C3E50] px-4 py-2.5 text-sm font-semibold text-[#2C3E50] transition hover:bg-[#2C3E50] hover:text-white"
                     >
@@ -115,7 +142,9 @@ export default function PaymentProofPreviewButton({
 
                   <div className="overflow-hidden rounded-[16px] border border-[#ece7de] bg-[#faf9f6]">
                     {proof.fileType === 'image' ? (
-                      <img src={proof.signedUrl} alt={`Bukti pembayaran ${requesterName}`} className="max-h-[70vh] w-full object-contain bg-white" />
+                      <div className="flex items-center justify-center bg-white p-4">
+                        <img src={proof.signedUrl} alt={`Bukti pembayaran ${requesterName}`} className="max-h-[70vh] w-full rounded-[12px] object-contain" />
+                      </div>
                     ) : proof.fileType === 'pdf' ? (
                       <iframe
                         src={proof.signedUrl}
