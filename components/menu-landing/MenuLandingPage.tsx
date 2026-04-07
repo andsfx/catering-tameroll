@@ -24,6 +24,15 @@ export default async function MenuLandingPage() {
     nextBatchLabel: activeBatch?.next_batch_label || null,
   }
 
+  const summaryItems = [
+    activeBatch?.name || 'Belum ada batch aktif',
+    statusLabel,
+    deadlineLabel || 'Segera diumumkan',
+    activeBatch?.remaining_quota !== null && activeBatch?.remaining_quota !== undefined
+      ? `Kuota ${activeBatch.remaining_quota} slot`
+      : 'Kuota cek admin',
+  ]
+
   return (
     <main className="min-h-screen bg-[#FDFBF7] text-[#2C3E50]">
       <section className="relative overflow-hidden bg-[linear-gradient(135deg,#2C3E50_0%,#1F2D3A_60%,#15202A_100%)] px-4 pb-14 pt-8 text-white sm:px-6 lg:px-8">
@@ -54,38 +63,26 @@ export default async function MenuLandingPage() {
           </div>
 
           <div id="top" className="space-y-6 py-10 lg:py-14">
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/85">
                 Jadwal Menu Batch
               </div>
               <h1 className="font-serif text-[1.9rem] leading-tight tracking-[-0.02em] text-white sm:text-[2.2rem]">
                 Jadwal Batch Catering Tameroll
               </h1>
-              <div className="grid gap-4 lg:grid-cols-[1fr_1fr_auto]">
-                <div className="rounded-[18px] border border-[#F5C39C]/20 bg-[#D35400]/20 p-5 backdrop-blur-md shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                    Batch Aktif
-                  </p>
-                  <h2 className="mt-3 font-serif text-[1.7rem] leading-tight tracking-[-0.02em] text-white sm:text-[1.9rem]">
-                    {activeBatch?.name || 'Belum ada batch aktif'}
-                  </h2>
+              <div className="flex flex-col gap-4 rounded-[20px] border border-white/10 bg-white/10 p-5 backdrop-blur-md shadow-[0_18px_40px_rgba(0,0,0,0.12)] sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-wrap gap-3 text-sm text-white/78">
+                  {summaryItems.map((item) => (
+                    <span key={item} className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
+                      {item}
+                    </span>
+                  ))}
                 </div>
-                <div className="rounded-[18px] border border-white/10 bg-white/10 p-5 backdrop-blur-md shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                    Status Batch
-                  </p>
-                  <h2 className="mt-3 font-serif text-[1.7rem] leading-tight tracking-[-0.02em] text-white sm:text-[1.9rem]">
-                    {statusLabel}
-                  </h2>
-                  <p className="mt-2 text-sm leading-7 text-white/72">
-                    {batchOpen ? 'Konfirmasi sebelum kuota penuh.' : 'Hubungi admin untuk waiting list batch berikutnya.'}
-                  </p>
-                </div>
-                <div className="flex items-stretch">
+                <div className="flex shrink-0 items-stretch">
                 {batchOpen ? (
                   <a
                     href="/join-batch"
-                      className="inline-flex w-full items-center justify-center rounded-[18px] bg-white px-6 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
+                      className="inline-flex w-full items-center justify-center rounded-[14px] bg-white px-6 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
                   >
                     Isi Form Join
                   </a>
@@ -94,23 +91,12 @@ export default async function MenuLandingPage() {
                     href="https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20ingin%20bertanya%20tentang%20batch%20catering%20berikutnya."
                     target="_blank"
                     rel="noopener noreferrer"
-                      className="inline-flex w-full items-center justify-center rounded-[18px] bg-white px-6 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
+                      className="inline-flex w-full items-center justify-center rounded-[14px] bg-white px-6 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
                   >
                     Chat Admin
                   </a>
                 )}
                 </div>
-              </div>
-              <div className="flex flex-wrap gap-3 text-sm text-white/72">
-                <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
-                  Deadline {deadlineLabel || 'menyusul'}
-                </span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
-                  Kuota {activeBatch?.remaining_quota !== null && activeBatch?.remaining_quota !== undefined ? `${activeBatch.remaining_quota} slot` : 'cek admin'}
-                </span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
-                  Batch berikutnya {nextBatchOpenLabel || 'akan diumumkan'}
-                </span>
               </div>
             </div>
 

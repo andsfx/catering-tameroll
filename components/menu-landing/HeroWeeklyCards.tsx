@@ -36,7 +36,7 @@ export default function HeroWeeklyCards({ items, batchMeta }: HeroWeeklyCardsPro
               </span>
             </div>
 
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {row.map((item) => {
                 const disabled = !item.isAvailable
 
@@ -48,18 +48,18 @@ export default function HeroWeeklyCards({ items, batchMeta }: HeroWeeklyCardsPro
                     className={`flex w-full items-start justify-between gap-3 rounded-[14px] border px-4 py-3 text-left transition ${
                       disabled
                         ? 'cursor-default border-white/8 bg-white/5 text-white/45'
-                        : 'border-[#F5C39C]/20 bg-[#D35400]/90 text-white hover:bg-[#C14D08]'
+                        : 'border-white/12 bg-black/10 text-white hover:border-[#F5C39C]/20 hover:bg-[#D35400]/25'
                     }`}
                   >
-                    <div>
-                      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${disabled ? 'text-white/40' : 'text-white/70'}`}>
+                    <div className="min-w-0">
+                      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${disabled ? 'text-white/40' : 'text-[#F5C39C]'}`}>
                         {item.dayName}
                       </p>
-                      <p className={`mt-1 text-[13px] font-bold tracking-[-0.01em] ${disabled ? 'text-white/75' : 'text-white'}`}>
+                      <p className={`mt-1 line-clamp-1 text-[13px] font-bold tracking-[-0.01em] ${disabled ? 'text-white/75' : 'text-white'}`}>
                         {item.mainCourse || 'Belum tersedia'}
                       </p>
                     </div>
-                    <p className={`whitespace-nowrap text-[11px] font-medium ${disabled ? 'text-white/40' : 'text-white/80'}`}>
+                    <p className={`whitespace-nowrap text-[11px] font-medium ${disabled ? 'text-white/40' : 'text-white/70'}`}>
                       {formatMenuDateShort(item.date)}
                     </p>
                   </button>
