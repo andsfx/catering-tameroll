@@ -25,11 +25,11 @@ export default function HeroScheduleCalendar({ items }: { items: MenuItem[] }) {
         ))}
       </div>
 
-      <div className="mt-4 space-y-2.5 sm:space-y-3">
+      <div className="mt-4 space-y-2 sm:space-y-3">
         {rows.map((row, rowIndex) => (
           <section
             key={rowIndex}
-            className="rounded-[16px] border border-white/10 bg-black/10 p-2.5 sm:p-3"
+            className="rounded-[16px] border border-white/10 bg-black/10 p-2 sm:p-3"
           >
             <div className="mb-2 flex items-center justify-between gap-3 border-b border-white/10 pb-2">
               <p className="text-[9px] font-semibold uppercase tracking-[0.22em] text-white/55 sm:text-[10px]">
@@ -40,26 +40,26 @@ export default function HeroScheduleCalendar({ items }: { items: MenuItem[] }) {
               </p>
             </div>
 
-            <div className="grid grid-cols-5 gap-2 sm:gap-2.5">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2.5">
             {row.map((item) => {
               const disabled = !item.isAvailable
 
               return (
                 <div
                   key={item.date}
-                  className={`rounded-[16px] border p-3 text-left ${
+                  className={`rounded-[14px] border p-2 sm:rounded-[16px] sm:p-3 text-left ${
                     disabled
                       ? 'border-white/10 bg-white/5 text-white/45'
                       : 'border-[#F5C39C]/20 bg-[#D35400]/90 text-white shadow-[0_10px_24px_rgba(211,84,0,0.18)]'
                   }`}
                 >
-                  <p className={`text-[9px] font-semibold uppercase tracking-[0.14em] ${disabled ? 'text-white/40' : 'text-white/70'}`}>
+                  <p className={`hidden text-[9px] font-semibold uppercase tracking-[0.14em] sm:block ${disabled ? 'text-white/40' : 'text-white/70'}`}>
                     {item.dayName}
                   </p>
-                  <p className={`mt-1 text-[13px] font-bold tracking-[-0.01em] sm:text-sm ${disabled ? 'text-white/75' : 'text-white'}`}>
+                  <p className={`text-[12px] font-bold tracking-[-0.01em] sm:mt-1 sm:text-sm ${disabled ? 'text-white/75' : 'text-white'}`}>
                     {formatMenuDateShort(item.date)}
                   </p>
-                  <p className={`mt-1.5 line-clamp-2 text-[10px] leading-5 sm:text-[11px] ${disabled ? 'text-white/45' : 'text-white/85'}`}>
+                  <p className={`mt-1 line-clamp-2 text-[9px] leading-4 sm:mt-1.5 sm:text-[11px] sm:leading-5 ${disabled ? 'text-white/45' : 'text-white/85'}`}>
                     {item.mainCourse || 'Belum tersedia'}
                   </p>
                 </div>

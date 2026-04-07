@@ -4,7 +4,7 @@ import Testimonials from '@/components/Testimonials'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import { getActiveBatch } from '@/lib/data/batches'
 import { getPublicMenuPayload } from '@/lib/data/public-menu'
-import { formatOptionalLongDate, getBatchStatusLabel } from '@/lib/menu'
+import { formatOptionalLongDate, getBatchStatusLabel, isBatchJoinOpen } from '@/lib/menu'
 import HeroScheduleCalendar from '@/components/menu-landing/HeroScheduleCalendar'
 
 export default async function MenuLandingPage() {
@@ -13,6 +13,7 @@ export default async function MenuLandingPage() {
   const deadlineLabel = activeBatch?.deadline_join ? formatOptionalLongDate(activeBatch.deadline_join) : 'Segera diumumkan'
   const nextBatchOpenLabel = activeBatch?.next_batch_open ? formatOptionalLongDate(activeBatch.next_batch_open) : 'Akan diumumkan'
   const scheduleItems = publicMenuPayload.data.slice(0, 20)
+  const batchOpen = activeBatch ? isBatchJoinOpen(activeBatch.status) : false
 
   const heroCards = [
     {
@@ -90,18 +91,37 @@ export default async function MenuLandingPage() {
                 </div>
               ))}
               <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+                {batchOpen ? (
+                  <a
+                    href="/join-batch"
+                    className="inline-flex items-center justify-center rounded-[12px] bg-white px-5 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
+                  >
+                    Isi Form Join
+                  </a>
+                ) : (
+                  <a
+                    href="https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20ingin%20bertanya%20tentang%20batch%20catering%20berikutnya."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-[12px] bg-white px-5 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
+                  >
+                    Chat Admin
+                  </a>
+                )}
                 <a
                   href="#batch-aktif"
-                  className="inline-flex items-center justify-center rounded-[12px] bg-white px-5 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
+                  className="inline-flex items-center justify-center rounded-[12px] border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
                 >
                   Lihat Jadwal Lengkap
                 </a>
-                <a
-                  href="/join-batch"
-                  className="inline-flex items-center justify-center rounded-[12px] border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
-                >
-                  Isi Form Join
-                </a>
+              </div>
+              <div className="rounded-[18px] border border-white/10 bg-white/5 p-4 text-white/72 backdrop-blur-sm">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/55">
+                  Catatan Singkat
+                </p>
+                <p className="mt-2 text-[14px] leading-6">
+                  Semua jadwal di halaman ini adalah referensi batch. Keputusan join tetap mengikuti status batch aktif saat Anda konfirmasi.
+                </p>
               </div>
             </div>
 

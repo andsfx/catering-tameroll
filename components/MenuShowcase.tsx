@@ -96,26 +96,6 @@ export default function MenuSection() {
     <section id="menu" className="bg-[#FDFBF7] py-20 sm:py-28" ref={ref}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="mx-auto mb-12 max-w-4xl text-center sm:mb-16"
-        >
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#D35400]/20 bg-[#D35400]/5 px-4 py-1.5">
-            <div className="h-1.5 w-1.5 rounded-full bg-[#D35400]" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">
-              Batch Pre-Order
-            </span>
-          </div>
-          <h2 className="mb-4 font-serif text-3xl leading-[1.08] tracking-[-0.02em] text-[#2C3E50] sm:text-4xl lg:text-5xl">
-            Batch Catering <span className="text-[#D35400]">4 Minggu Kerja</span>
-          </h2>
-          <p className="mx-auto max-w-3xl text-[15px] leading-8 text-charcoal-600 sm:text-lg">
-            Menu 4 minggu ini adalah referensi slot dalam sistem batch. Calon customer wajib konfirmasi via WhatsApp sebelum bergabung ke batch yang sedang dibuka.
-          </p>
-        </motion.div>
-
-        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.15 }}
@@ -138,7 +118,7 @@ export default function MenuSection() {
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                     <div className="max-w-2xl">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">
-                        Batch Aktif Saat Ini
+                        Detail Batch Aktif
                       </p>
                       <h3 className="mt-2 font-serif text-[1.9rem] leading-tight tracking-[-0.02em] text-[#2C3E50] sm:text-[2.15rem]">
                         {batchMeta.currentBatchLabel || formatBatchRange(batchSummary)}
@@ -264,10 +244,10 @@ export default function MenuSection() {
               <div>
                 <div className="mb-4 flex items-center justify-between gap-4">
                   <div>
-                    <h3 className="font-serif text-[1.85rem] leading-tight tracking-[-0.02em] text-[#2C3E50] sm:text-[2.1rem]">
+                    <h3 className="font-serif text-[1.75rem] leading-tight tracking-[-0.02em] text-[#2C3E50] sm:text-[1.95rem]">
                       Timeline Batch 4 Minggu
                     </h3>
-                    <p className="mt-1 text-[15px] leading-7 text-charcoal-600 sm:text-base">
+                    <p className="mt-1 max-w-3xl text-[15px] leading-7 text-charcoal-600 sm:text-base">
                       {timelineCopy}
                     </p>
                   </div>
