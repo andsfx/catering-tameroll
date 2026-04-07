@@ -12,7 +12,7 @@ export default async function MenuLandingPage() {
   const statusLabel = activeBatch ? getBatchStatusLabel(activeBatch.status) : 'Batch Belum Tersedia'
   const deadlineLabel = activeBatch?.deadline_join ? formatOptionalLongDate(activeBatch.deadline_join) : 'Segera diumumkan'
   const nextBatchOpenLabel = activeBatch?.next_batch_open ? formatOptionalLongDate(activeBatch.next_batch_open) : 'Akan diumumkan'
-  const scheduleItems = publicMenuPayload.data.slice(0, 10)
+  const scheduleItems = publicMenuPayload.data.slice(0, 20)
 
   const heroCards = [
     {
