@@ -129,45 +129,9 @@ export default function MenuSection() {
                       <p className="mt-3 max-w-2xl text-[15px] leading-7 text-charcoal-600 sm:text-base">
                         {statusCopy}
                       </p>
-                      <div className="mt-4 rounded-[14px] border border-[#ead8c9] bg-white/80 px-4 py-4 shadow-sm">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-charcoal-400">
-                          Keputusan Berikutnya
-                        </p>
-                        <p className="mt-2 text-[15px] leading-7 text-[#2C3E50]">
-                          {batchOpen
-                            ? 'Jika batch masih dibuka, langsung konfirmasi ke admin sebelum deadline join agar kuota Anda diamankan.'
-                            : 'Batch ini tidak menerima peserta baru. Langkah terbaik sekarang adalah masuk waiting list untuk batch berikutnya.'}
-                        </p>
-                      </div>
-                      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                        <div className="rounded-[12px] border border-[#ece7de] bg-white px-4 py-3 shadow-sm">
-                          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-charcoal-400">
-                            Deadline Join
-                          </p>
-                          <p className="mt-2 text-sm font-semibold leading-6 text-[#2C3E50] sm:text-base">
-                            {deadlineLabel || 'Segera dikonfirmasi admin'}
-                          </p>
-                        </div>
-                        <div className="rounded-[12px] border border-[#ece7de] bg-white px-4 py-3 shadow-sm">
-                          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-charcoal-400">
-                            Kuota Tersisa
-                          </p>
-                          <p className="mt-2 text-sm font-semibold leading-6 text-[#2C3E50] sm:text-base">
-                            {batchMeta.remainingQuota !== null ? `${batchMeta.remainingQuota} slot` : 'Cek via admin'}
-                          </p>
-                        </div>
-                        <div className="rounded-[12px] border border-[#ece7de] bg-white px-4 py-3 shadow-sm">
-                          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-charcoal-400">
-                            Batch Berikutnya
-                          </p>
-                          <p className="mt-2 text-sm font-semibold leading-6 text-[#2C3E50] sm:text-base">
-                            {nextBatchLabel || 'Akan diumumkan'}
-                          </p>
-                        </div>
-                      </div>
                     </div>
                     <div className="flex flex-col gap-3 lg:items-end">
-                      <div className="flex flex-wrap gap-3 text-sm text-charcoal-600 lg:justify-end">
+                      <div className="flex max-w-xl flex-wrap gap-3 text-sm text-charcoal-600 lg:justify-end">
                         <span className="rounded-full border border-[#ece7de] bg-white px-4 py-2 shadow-sm">
                           4 minggu kerja
                         </span>
@@ -176,6 +140,9 @@ export default function MenuSection() {
                         </span>
                         <span className="rounded-full bg-[#D35400]/10 px-4 py-2 font-semibold text-[#D35400]">
                         {batchSummary.activeSlots} slot siap dipilih
+                        </span>
+                        <span className="rounded-full border border-[#ece7de] bg-white px-4 py-2 shadow-sm">
+                          Deadline {deadlineLabel || 'menyusul'}
                         </span>
                       </div>
                       {batchOpen ? (
@@ -241,19 +208,6 @@ export default function MenuSection() {
               )}
 
               <WeeklyMenuList items={items} onSelect={setSelectedItem} />
-              <div>
-                <div className="mb-4 flex items-center justify-between gap-4">
-                  <div>
-                    <h3 className="font-serif text-[1.75rem] leading-tight tracking-[-0.02em] text-[#2C3E50] sm:text-[1.95rem]">
-                      Timeline Batch 4 Minggu
-                    </h3>
-                    <p className="mt-1 max-w-3xl text-[15px] leading-7 text-charcoal-600 sm:text-base">
-                      {timelineCopy}
-                    </p>
-                  </div>
-                </div>
-                <MenuCalendar items={items} onSelect={setSelectedItem} />
-              </div>
             </>
           ) : null}
         </motion.div>
