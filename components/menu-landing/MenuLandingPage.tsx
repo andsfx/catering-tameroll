@@ -4,8 +4,8 @@ import Testimonials from '@/components/Testimonials'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import { getActiveBatch } from '@/lib/data/batches'
 import { getPublicMenuPayload } from '@/lib/data/public-menu'
-import { formatOptionalLongDate, getBatchStatusLabel, isBatchJoinOpen } from '@/lib/menu'
-import HeroScheduleCalendar from '@/components/menu-landing/HeroScheduleCalendar'
+import { formatOptionalLongDate, getBatchStatusLabel, isBatchJoinOpen, type BatchMeta } from '@/lib/menu'
+import HeroWeeklyCards from '@/components/menu-landing/HeroWeeklyCards'
 
 export default async function MenuLandingPage() {
   const [activeBatch, publicMenuPayload] = await Promise.all([getActiveBatch(), getPublicMenuPayload()])
@@ -15,28 +15,14 @@ export default async function MenuLandingPage() {
   const scheduleItems = publicMenuPayload.data.slice(0, 20)
   const batchOpen = activeBatch ? isBatchJoinOpen(activeBatch.status) : false
 
-  const heroCards = [
-    {
-      label: 'Batch Aktif',
-      value: activeBatch?.name || 'Belum ada batch aktif',
-      meta: statusLabel,
-    },
-    {
-      label: 'Deadline Join',
-      value: deadlineLabel || 'Segera diumumkan',
-      meta: activeBatch?.status === 'open' ? 'Konfirmasi sebelum kuota penuh' : 'Mengikuti status batch aktif',
-    },
-    {
-      label: 'Kuota Tersisa',
-      value: activeBatch?.remaining_quota !== null && activeBatch?.remaining_quota !== undefined ? `${activeBatch.remaining_quota} Slot` : 'Cek via admin',
-      meta: 'Diperbarui dari data batch aktif',
-    },
-    {
-      label: 'Batch Berikutnya',
-      value: nextBatchOpenLabel || 'Akan diumumkan',
-      meta: activeBatch?.next_batch_label || 'Info batch berikutnya akan diupdate oleh admin',
-    },
-  ]
+  const batchMeta: BatchMeta = {
+    batchStatus: activeBatch?.status || 'open',
+    currentBatchLabel: activeBatch?.name || 'Batch Belum Tersedia',
+    deadlineJoin: activeBatch?.deadline_join || null,
+    remainingQuota: activeBatch?.remaining_quota ?? null,
+    nextBatchOpen: activeBatch?.next_batch_open || null,
+    nextBatchLabel: activeBatch?.next_batch_label || null,
+  }
 
   return (
     <main className="min-h-screen bg-[#FDFBF7] text-[#2C3E50]">
@@ -67,34 +53,39 @@ export default async function MenuLandingPage() {
             </a>
           </div>
 
-          <div id="top" className="grid gap-8 py-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-start lg:py-14">
+          <div id="top" className="space-y-6 py-10 lg:py-14">
             <div className="space-y-4">
               <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/85">
                 Jadwal Menu Batch
               </div>
-              {heroCards.map((card, index) => (
-                <div
-                  key={card.label}
-                  className={`rounded-[18px] border p-5 backdrop-blur-md shadow-[0_18px_40px_rgba(0,0,0,0.12)] ${
-                    index === 0
-                      ? 'border-[#F5C39C]/20 bg-[#D35400]/20'
-                      : 'border-white/10 bg-white/10'
-                  }`}
-                >
+              <h1 className="font-serif text-[1.9rem] leading-tight tracking-[-0.02em] text-white sm:text-[2.2rem]">
+                Jadwal Batch Catering Tameroll
+              </h1>
+              <div className="grid gap-4 lg:grid-cols-[1fr_1fr_auto]">
+                <div className="rounded-[18px] border border-[#F5C39C]/20 bg-[#D35400]/20 p-5 backdrop-blur-md shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                    {card.label}
+                    Batch Aktif
                   </p>
                   <h2 className="mt-3 font-serif text-[1.7rem] leading-tight tracking-[-0.02em] text-white sm:text-[1.9rem]">
-                    {card.value}
+                    {activeBatch?.name || 'Belum ada batch aktif'}
                   </h2>
-                  <p className="mt-2 text-sm leading-7 text-white/72">{card.meta}</p>
                 </div>
-              ))}
-              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+                <div className="rounded-[18px] border border-white/10 bg-white/10 p-5 backdrop-blur-md shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/60">
+                    Status Batch
+                  </p>
+                  <h2 className="mt-3 font-serif text-[1.7rem] leading-tight tracking-[-0.02em] text-white sm:text-[1.9rem]">
+                    {statusLabel}
+                  </h2>
+                  <p className="mt-2 text-sm leading-7 text-white/72">
+                    {batchOpen ? 'Konfirmasi sebelum kuota penuh.' : 'Hubungi admin untuk waiting list batch berikutnya.'}
+                  </p>
+                </div>
+                <div className="flex items-stretch">
                 {batchOpen ? (
                   <a
                     href="/join-batch"
-                    className="inline-flex items-center justify-center rounded-[12px] bg-white px-5 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
+                      className="inline-flex w-full items-center justify-center rounded-[18px] bg-white px-6 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
                   >
                     Isi Form Join
                   </a>
@@ -103,29 +94,27 @@ export default async function MenuLandingPage() {
                     href="https://wa.me/6285183248797?text=Halo%20Tameroll%2C%20saya%20ingin%20bertanya%20tentang%20batch%20catering%20berikutnya."
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center rounded-[12px] bg-white px-5 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
+                      className="inline-flex w-full items-center justify-center rounded-[18px] bg-white px-6 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
                   >
                     Chat Admin
                   </a>
                 )}
-                <a
-                  href="#batch-aktif"
-                  className="inline-flex items-center justify-center rounded-[12px] border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
-                >
-                  Lihat Jadwal Lengkap
-                </a>
+                </div>
               </div>
-              <div className="rounded-[18px] border border-white/10 bg-white/5 p-4 text-white/72 backdrop-blur-sm">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/55">
-                  Catatan Singkat
-                </p>
-                <p className="mt-2 text-[14px] leading-6">
-                  Semua jadwal di halaman ini adalah referensi batch. Keputusan join tetap mengikuti status batch aktif saat Anda konfirmasi.
-                </p>
+              <div className="flex flex-wrap gap-3 text-sm text-white/72">
+                <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
+                  Deadline {deadlineLabel || 'menyusul'}
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
+                  Kuota {activeBatch?.remaining_quota !== null && activeBatch?.remaining_quota !== undefined ? `${activeBatch.remaining_quota} slot` : 'cek admin'}
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">
+                  Batch berikutnya {nextBatchOpenLabel || 'akan diumumkan'}
+                </span>
               </div>
             </div>
 
-            <HeroScheduleCalendar items={scheduleItems} />
+            <HeroWeeklyCards items={scheduleItems} batchMeta={batchMeta} />
           </div>
         </div>
       </section>
