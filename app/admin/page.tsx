@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { requireAdminSession } from '@/lib/auth/admin-session'
 import AdminShell from '@/components/admin/AdminShell'
 import { getAllBatches } from '@/lib/data/batches'
-import { getJoinRequestStats } from '@/lib/data/join-requests'
+import { getJoinRequestStats, getJoinRequestStatsByBatch } from '@/lib/data/join-requests'
 
 type Props = {
   searchParams: Promise<{
@@ -23,6 +23,7 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
     getJoinRequestStats(),
   ])
   const activeBatch = batches.find((batch) => batch.is_active)
+  const activeBatchStats = activeBatch ? await getJoinRequestStatsByBatch(activeBatch.id) : null
 
   return (
     <AdminShell
@@ -46,6 +47,23 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
             <h2 className="mt-3 text-lg font-semibold text-[#2C3E50]">{activeBatch?.status || '-'}</h2>
           </div>
         </div>
+
+        {activeBatch && activeBatchStats ? (
+          <div className="rounded-[18px] border border-[#ece7de] bg-white p-5 shadow-[0_18px_48px_rgba(0,0,0,0.06)]">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">Statistik Batch Aktif</p>
+                <h2 className="mt-2 text-lg font-semibold text-[#2C3E50]">{activeBatch.name}</h2>
+              </div>
+              <div className="flex flex-wrap gap-3 text-sm text-charcoal-600">
+                <span className="rounded-full border border-[#ece7de] bg-[#faf9f6] px-4 py-2">Total Request {activeBatchStats.total}</span>
+                <span className="rounded-full bg-amber-50 px-4 py-2 text-amber-700">New {activeBatchStats.newCount}</span>
+                <span className="rounded-full bg-emerald-50 px-4 py-2 text-emerald-700">Verified {activeBatchStats.verifiedCount}</span>
+                <span className="rounded-full bg-sky-50 px-4 py-2 text-sky-700">Waitlisted {activeBatchStats.waitlistedCount}</span>
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         <div className="grid gap-4 md:grid-cols-4">
           <Link href="/admin/join-requests?status=new" className="rounded-[16px] border border-amber-200 bg-amber-50 p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] transition hover:-translate-y-0.5">

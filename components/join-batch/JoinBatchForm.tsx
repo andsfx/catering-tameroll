@@ -1,6 +1,8 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { useFormState } from 'react-dom'
+import { track } from '@vercel/analytics'
 import { submitJoinBatch } from '@/app/join-batch/actions'
 import FormNotice from '@/components/admin/FormNotice'
 import SubmitButton from '@/components/admin/SubmitButton'
@@ -14,9 +16,52 @@ export default function JoinBatchForm({
   batchStatusLabel: string
 }) {
   const [state, action] = useFormState(submitJoinBatch, emptyAdminFormState)
+  const hasTrackedView = useRef(false)
+  const lastTrackedState = useRef<'idle' | 'success' | 'error'>('idle')
+
+  useEffect(() => {
+    if (hasTrackedView.current) return
+    hasTrackedView.current = true
+    track('join_batch_form_view', {
+      batchName,
+      batchStatusLabel,
+    })
+  }, [batchName, batchStatusLabel])
+
+  useEffect(() => {
+    if (state.success && lastTrackedState.current !== 'success') {
+      lastTrackedState.current = 'success'
+      track('join_batch_submit_success', {
+        batchName,
+        batchStatusLabel,
+      })
+    }
+
+    if (state.error && lastTrackedState.current !== 'error') {
+      lastTrackedState.current = 'error'
+      track('join_batch_submit_error', {
+        batchName,
+        batchStatusLabel,
+        message: state.error,
+      })
+    }
+
+    if (!state.error && !state.success) {
+      lastTrackedState.current = 'idle'
+    }
+  }, [state.error, state.success, batchName, batchStatusLabel])
 
   return (
-    <form action={action} className="space-y-5 rounded-[18px] border border-[#ece7de] bg-white p-6 shadow-[0_18px_48px_rgba(0,0,0,0.06)] sm:p-8">
+    <form
+      action={action}
+      onSubmitCapture={() =>
+        track('join_batch_submit_attempt', {
+          batchName,
+          batchStatusLabel,
+        })
+      }
+      className="space-y-5 rounded-[18px] border border-[#ece7de] bg-white p-6 shadow-[0_18px_48px_rgba(0,0,0,0.06)] sm:p-8"
+    >
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#D35400]">
           Form Join Batch

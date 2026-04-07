@@ -70,6 +70,29 @@ export async function getJoinRequestStats() {
   }
 }
 
+export async function getJoinRequestStatsByBatch(batchId: string) {
+  const supabase = createSupabaseAdminClient()
+
+  const [totalResult, newResult, verifiedResult, waitlistedResult] = await Promise.all([
+    supabase.from('join_requests').select('id', { count: 'exact', head: true }).eq('batch_id', batchId),
+    supabase.from('join_requests').select('id', { count: 'exact', head: true }).eq('batch_id', batchId).eq('status', 'new'),
+    supabase.from('join_requests').select('id', { count: 'exact', head: true }).eq('batch_id', batchId).eq('status', 'verified'),
+    supabase.from('join_requests').select('id', { count: 'exact', head: true }).eq('batch_id', batchId).eq('status', 'waitlisted'),
+  ])
+
+  if (totalResult.error) throw totalResult.error
+  if (newResult.error) throw newResult.error
+  if (verifiedResult.error) throw verifiedResult.error
+  if (waitlistedResult.error) throw waitlistedResult.error
+
+  return {
+    total: totalResult.count || 0,
+    newCount: newResult.count || 0,
+    verifiedCount: verifiedResult.count || 0,
+    waitlistedCount: waitlistedResult.count || 0,
+  }
+}
+
 export async function createJoinRequest(input: {
   batchId: string
   fullName: string
