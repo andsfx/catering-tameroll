@@ -3,13 +3,16 @@ import HowToOrder from '@/components/HowToOrder'
 import Testimonials from '@/components/Testimonials'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import { getActiveBatch } from '@/lib/data/batches'
+import { getPublicMenuPayload } from '@/lib/data/public-menu'
 import { formatOptionalLongDate, getBatchStatusLabel } from '@/lib/menu'
+import HeroScheduleCalendar from '@/components/menu-landing/HeroScheduleCalendar'
 
 export default async function MenuLandingPage() {
-  const activeBatch = await getActiveBatch()
+  const [activeBatch, publicMenuPayload] = await Promise.all([getActiveBatch(), getPublicMenuPayload()])
   const statusLabel = activeBatch ? getBatchStatusLabel(activeBatch.status) : 'Batch Belum Tersedia'
   const deadlineLabel = activeBatch?.deadline_join ? formatOptionalLongDate(activeBatch.deadline_join) : 'Segera diumumkan'
   const nextBatchOpenLabel = activeBatch?.next_batch_open ? formatOptionalLongDate(activeBatch.next_batch_open) : 'Akan diumumkan'
+  const scheduleItems = publicMenuPayload.data.slice(0, 10)
 
   const heroCards = [
     {
@@ -63,38 +66,19 @@ export default async function MenuLandingPage() {
             </a>
           </div>
 
-          <div id="top" className="grid gap-10 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-16">
-            <div className="max-w-2xl">
-              <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/85">
-                Menu Catering 4 Minggu
-              </div>
-              <h1 className="mt-5 font-serif text-4xl leading-[1.02] tracking-[-0.03em] text-white sm:text-5xl lg:text-[3.8rem]">
-                Jadwal Batch Catering Tameroll
-              </h1>
-              <p className="mt-5 max-w-xl text-[16px] leading-8 text-white/78 sm:text-lg">
-                Lihat referensi menu batch aktif, cek deadline join, lalu konfirmasi ke admin. Jika batch sudah berjalan, Anda akan diarahkan ke waiting list batch berikutnya.
-              </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <a
-                  href="#batch-aktif"
-                  className="inline-flex items-center justify-center rounded-[12px] bg-[#D35400] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#B94600]"
-                >
-                  Cek Batch Aktif
-                </a>
-                <a
-                  href="#cara-join"
-                  className="inline-flex items-center justify-center rounded-[12px] border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
-                >
-                  Cara Join Batch
-                </a>
-              </div>
-            </div>
-
+          <div id="top" className="grid gap-8 py-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-start lg:py-14">
             <div className="space-y-4">
-              {heroCards.map((card) => (
+              <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/85">
+                Jadwal Menu Batch
+              </div>
+              {heroCards.map((card, index) => (
                 <div
                   key={card.label}
-                  className="rounded-[18px] border border-white/10 bg-white/10 p-5 backdrop-blur-md shadow-[0_18px_40px_rgba(0,0,0,0.12)]"
+                  className={`rounded-[18px] border p-5 backdrop-blur-md shadow-[0_18px_40px_rgba(0,0,0,0.12)] ${
+                    index === 0
+                      ? 'border-[#F5C39C]/20 bg-[#D35400]/20'
+                      : 'border-white/10 bg-white/10'
+                  }`}
                 >
                   <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/60">
                     {card.label}
@@ -105,15 +89,23 @@ export default async function MenuLandingPage() {
                   <p className="mt-2 text-sm leading-7 text-white/72">{card.meta}</p>
                 </div>
               ))}
-              <div className="rounded-[18px] border border-[#F5C39C]/20 bg-[#F5C39C]/10 p-5 text-[#FBE5D1] backdrop-blur-md">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#FBE5D1]/80">
-                  Catatan
-                </p>
-                <p className="mt-3 text-[15px] leading-7">
-                  Semua jadwal di halaman ini adalah referensi batch. Join batch tetap harus dikonfirmasi ke admin.
-                </p>
+              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+                <a
+                  href="#batch-aktif"
+                  className="inline-flex items-center justify-center rounded-[12px] bg-white px-5 py-3 text-sm font-bold text-[#2C3E50] transition hover:bg-[#FDF3EA]"
+                >
+                  Lihat Jadwal Lengkap
+                </a>
+                <a
+                  href="/join-batch"
+                  className="inline-flex items-center justify-center rounded-[12px] border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
+                >
+                  Isi Form Join
+                </a>
               </div>
             </div>
+
+            <HeroScheduleCalendar items={scheduleItems} />
           </div>
         </div>
       </section>
